@@ -15,7 +15,7 @@ const nav = [['首页',''],['文章','articles/'],['分类','topics/'],['实验'
     <title>{title === site.title ? `${site.title} 的个人博客` : `${title} · ${site.title}`}</title>
     <meta name="description" content={description} />
     <meta name="author" content={site.author} />
-    <meta name="theme-color" content="#fcfcfa" />
+    <meta name="theme-color" content="#ffffff" />
     {!site.isPublic && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={new URL(pathname, Astro.site)} />
     <link rel="icon" type="image/svg+xml" href={pathFor('favicon.svg')} />
@@ -37,7 +37,7 @@ const nav = [['首页',''],['文章','articles/'],['分类','topics/'],['实验'
   <body>
     <a class="skip-link" href="#main">跳到正文</a>
     <header class="site-header shell" data-pagefind-ignore>
-      <a class="brand" href={pathFor()} aria-label="congroo 首页"><span class="author-wordmark">congroo</span></a>
+      <a class="brand" href={pathFor()} aria-label="congroo 首页"><span class="author-wordmark">congroo</span><span class="brand-caption">个人技术博客</span></a>
       <nav class="header-navigation" aria-label="主导航">{nav.map(([label,url]) => <a href={pathFor(url)} aria-current={url === '' ? (pathname === pathFor() ? 'page' : undefined) : (pathname.startsWith(pathFor(url)) ? 'page' : undefined)}>{label}</a>)}</nav>
       <div class="header-tools">
         <a href={pathFor('articles/#search')} class="search-link" aria-label="搜索文章"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></svg><span>搜索</span></a>

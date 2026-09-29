@@ -4,21 +4,46 @@ import PostRow from '../components/PostRow.astro';
 import '../styles/home.css';
 import { getCollection } from 'astro:content';
 import { pathFor } from '../lib/paths';
-import { categories, site } from '../lib/site';
+import { categories, formatDate, site } from '../lib/site';
 const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf()||Number(b.data.featured)-Number(a.data.featured)||a.data.seriesOrder-b.data.seriesOrder);
 const grouped=Object.entries(categories).map(([key,value])=>({key,...value,count:posts.filter(p=>p.data.category===key).length})).filter(c=>c.count>0);
-const labs=await getCollection('lab',({data})=>!data.draft);
+const labs=(await getCollection('lab',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf());
+const latestLab=labs[0];
 ---
 <Base>
   <div class="shell research-home">
-    <header class="research-intro"><h1>技术文章</h1><p>Linux 网络、VPN 协议与密码工程。以机制、代码和可核对的记录展开。</p></header>
+    <header class="research-intro">
+      <h1>文章与札记<span lang="en">Writing</span></h1>
+      <p>从 Socket、TUN 到 IPsec，也读密码算法进入协议的那一段。</p>
+    </header>
     <div class="research-layout">
-      <section class="research-articles" aria-label="文章摘要"><div class="list-caption"><span>全部 {posts.length} 篇 · 按更新时间排列</span><a href={pathFor('articles/#search')}>检索正文 →</a></div>{posts.map(post=><PostRow post={post} headingLevel="h2"/>)}</section>
+      <section class="research-articles" aria-label="文章摘要">
+        <div class="list-caption"><span>最新文章 <span class="article-count">{posts.length} 篇</span></span><a href={pathFor('articles/#search')}>检索正文 →</a></div>
+        {posts.map((post,index)=><PostRow post={post} headingLevel="h2" lead={index===0}/>)}
+      </section>
       <aside class="research-sidebar">
-        <section><h2>关于作者</h2><p>我是 congroo，从事密码网关研发。这里整理学习中的问题、公开资料阅读和独立实验。</p><a href={pathFor('about/')}>关于与写作说明 →</a></section>
-        <section><h2>文章主题</h2><ul>{grouped.map(c=><li><a href={pathFor(`articles/?category=${c.key}`)}><span>{c.label}</span><span>{c.count}</span></a></li>)}</ul></section>
-        <section><h2>如何判断结论</h2><p>实验文章附执行者、环境与原始输出；资料阅读说明来源及尚未验证的部分。</p><a href={pathFor('about/#editorial')}>内容与修订原则 →</a></section>
-        <section><h2>实验记录</h2>{labs.map(lab=><p><a href={pathFor(`lab/${lab.id}/`)}>{lab.data.number} · {lab.data.title}</a></p>)}</section>
+        <section class="sidebar-profile">
+          <h2>关于这里</h2>
+          <p>我是 <span lang="en">congroo</span>，一名从事密码网关研发的工程师。</p>
+          <p>这里放学习笔记、公开资料阅读和独立实验。希望把协议描述和程序实际做的事对上。</p>
+          <a href={pathFor('about/')}>更多关于我 →</a>
+        </section>
+        <section class="sidebar-topics">
+          <h2>按主题阅读</h2>
+          <ul>{grouped.map(c=><li><a href={pathFor(`articles/?category=${c.key}`)}><span>{c.label}<small lang="en">{c.english}</small></span><span>{c.count}</span></a></li>)}</ul>
+        </section>
+        {latestLab&&<section class="sidebar-lab">
+          <h2>实验手记</h2>
+          <p class="lab-caption"><span>{latestLab.data.number}</span><time datetime={latestLab.data.updated.toISOString()}>{formatDate(latestLab.data.updated)}</time></p>
+          <h3><a href={pathFor(`lab/${latestLab.id}/`)}>{latestLab.data.title} →</a></h3>
+          <p>{latestLab.data.description}</p>
+          <p class="lab-question"><strong>还没解决</strong>{latestLab.data.openQuestions[0]}</p>
+        </section>}
+        <section>
+          <h2>关于文中的结论</h2>
+          <p>实验附执行者与原始输出；资料阅读标明来源。还没验证的部分，也留在文中。</p>
+          <a href={pathFor('about/#editorial')}>内容与修订原则 →</a>
+        </section>
         <section class="research-links"><a href={site.github}>GitHub ↗</a><a href={pathFor('subscribe/')}>RSS 订阅</a></section>
       </aside>
     </div>
