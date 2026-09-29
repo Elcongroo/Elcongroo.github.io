@@ -2,15 +2,39 @@
 .diagram-viewport {
   --diagram-edge: #626f67;
   --diagram-border: #8a968e;
+  --diagram-blue-fill: #eaf2fd;
+  --diagram-blue-border: #6386b7;
+  --diagram-green-fill: #e9f5ee;
+  --diagram-green-border: #578b70;
+  --diagram-violet-fill: #f1ecfb;
+  --diagram-violet-border: #9271b6;
+  --diagram-amber-fill: #fff3dc;
+  --diagram-amber-border: #b08b41;
 }
 :root[data-theme='dark'] .diagram-viewport {
   --diagram-edge: #b1c0b6;
   --diagram-border: #899d90;
+  --diagram-blue-fill: #25364b;
+  --diagram-blue-border: #8aadda;
+  --diagram-green-fill: #243c34;
+  --diagram-green-border: #83b99b;
+  --diagram-violet-fill: #352d49;
+  --diagram-violet-border: #b79bd4;
+  --diagram-amber-fill: #403622;
+  --diagram-amber-border: #cdb070;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) .diagram-viewport {
     --diagram-edge: #b1c0b6;
     --diagram-border: #899d90;
+    --diagram-blue-fill: #25364b;
+    --diagram-blue-border: #8aadda;
+    --diagram-green-fill: #243c34;
+    --diagram-green-border: #83b99b;
+    --diagram-violet-fill: #352d49;
+    --diagram-violet-border: #b79bd4;
+    --diagram-amber-fill: #403622;
+    --diagram-amber-border: #cdb070;
   }
 }
 .diagram-viewport:focus-visible {
@@ -19,4 +43,39 @@
 }
 .diagram-viewport svg {
   margin-inline: auto;
+}
+
+[data-protocol-diagram] [data-diagram-tone='blue'] {
+  --tone-fill: var(--diagram-blue-fill);
+  --tone-border: var(--diagram-blue-border);
+}
+[data-protocol-diagram] [data-diagram-tone='green'] {
+  --tone-fill: var(--diagram-green-fill);
+  --tone-border: var(--diagram-green-border);
+}
+[data-protocol-diagram] [data-diagram-tone='violet'] {
+  --tone-fill: var(--diagram-violet-fill);
+  --tone-border: var(--diagram-violet-border);
+}
+[data-protocol-diagram] [data-diagram-tone='amber'] {
+  --tone-fill: var(--diagram-amber-fill);
+  --tone-border: var(--diagram-amber-border);
+}
+[data-protocol-diagram] [data-diagram-tone] {
+  --protocol-_node-fill: var(--tone-fill);
+  --protocol-_node-stroke: var(--tone-border);
+  --protocol-_group-fill: color-mix(in srgb, var(--tone-fill) 35%, var(--paper));
+  --protocol-_group-hdr: var(--tone-fill);
+}
+[data-protocol-diagram] .lifeline[data-diagram-tone] { stroke: var(--tone-border); }
+[data-protocol-diagram] .node > :is(rect, polygon, circle, ellipse, path),
+[data-protocol-diagram] .actor > rect { stroke-width: 1; }
+[data-protocol-diagram] .note {
+  --protocol-_node-stroke: var(--diagram-amber-border);
+  --protocol-_inner-stroke: var(--diagram-amber-border);
+}
+[data-protocol-diagram] .note > polygon:first-child { fill: var(--diagram-amber-fill); }
+[data-protocol-diagram] .block {
+  --protocol-_node-stroke: var(--diagram-violet-border);
+  --protocol-_group-hdr: var(--diagram-violet-fill);
 }

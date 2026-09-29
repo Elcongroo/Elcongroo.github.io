@@ -3,6 +3,7 @@ import mdx from '@astrojs/mdx';
 import { unified } from '@astrojs/markdown-remark';
 import remarkReviewedNotes from './scripts/remark-reviewed-notes.mjs';
 import remarkBaseLinks from './scripts/remark-base-links.mjs';
+import { codeThemes } from './scripts/code-themes.mjs';
 
 const base = process.env.BASE_PATH || '/';
 export default defineConfig({
@@ -19,7 +20,7 @@ export default defineConfig({
   markdown: {
     processor: unified({ remarkPlugins: [remarkReviewedNotes, remarkBaseLinks] }),
     shikiConfig: {
-      themes: { light: 'github-light-high-contrast', dark: 'github-dark' },
+      themes: codeThemes,
       defaultColor: false,
     },
   },

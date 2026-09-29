@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { renderMermaidSVG } from 'beautiful-mermaid';
 import { renderExtraDiagram } from './render-extra-diagram.mjs';
+import { colorDiagram } from './diagram-palette.mjs';
 
 // Keep the renderer's CSS variables and selectors isolated from the page theme.
 const rendererVariables = /--(?:bg|fg|line|accent|muted|surface|border|_text-sec|_text-muted|_text-faint|_text|_line|_arrow|_node-fill|_node-stroke|_group-fill|_group-hdr|_inner-stroke|_key-badge)\b/g;
@@ -21,6 +22,7 @@ export function renderProtocolDiagram(source, instance = 'inline') {
       .replace(/\btext\s*\{/g, '[data-protocol-diagram] text {')
       .replace(/\.mono\s*\{/g, '[data-protocol-diagram] .mono {')
       .replace(/\bsvg\s*\{/g, '[data-protocol-diagram] {')}</style>`);
+    svg = colorDiagram(svg, source);
   }
   const prefix = `protocol-${createHash('sha256').update(source).digest('hex').slice(0, 12)}-${instance}-`;
   for (const id of new Set([...svg.matchAll(/\bid="([^"]+)"/g)].map(m => m[1]))) {
