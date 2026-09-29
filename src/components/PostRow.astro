@@ -3,17 +3,17 @@ import type { CollectionEntry } from 'astro:content';
 import { formatDate, categories } from '../lib/site';
 import { pathFor } from '../lib/paths';
 import Status from './Status.astro';
-interface Props { post: CollectionEntry<'posts'>; headingLevel?: 'h2' | 'h3'; lead?: boolean; }
-const { post, headingLevel: Heading = 'h3', lead = false } = Astro.props;
+interface Props { post: CollectionEntry<'posts'>; headingLevel?: 'h2' | 'h3'; compact?: boolean; }
+const { post, headingLevel: Heading = 'h3', compact = false } = Astro.props;
 const basis = post.data.basis;
 const basisHref = basis && (/^https?:/.test(basis.href) ? basis.href : pathFor(basis.href));
 ---
-<article class:list={['post-row', { 'post-lead': lead }]}>
+<article class:list={['post-row', { 'post-compact': compact }]}>
   <div class="post-time"><a class="post-category" href={pathFor(`articles/?category=${post.data.category}`)}>{categories[post.data.category].label}</a><span>{post.data.kind}</span><time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time><span>约 {post.data.minutes} 分钟</span></div>
   <div class="post-content">
     <Heading class="post-title"><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}</a></Heading>
     <p class="post-abstract">{post.data.description}</p>
-    {post.data.takeaway&&<p class="post-takeaway"><strong>要点：</strong>{post.data.takeaway}</p>}
+    {!compact&&post.data.takeaway&&<p class="post-takeaway"><strong>要点：</strong>{post.data.takeaway}</p>}
     <div class="post-basis"><Status state={post.data.conclusion}/>{basis&&<a href={basisHref}>{basis.label} ↗</a>}<a class="read-post" href={pathFor(`articles/${post.id}/`)} aria-label={`阅读全文：${post.data.title}`}>阅读全文 →</a></div>
     {basis&&<p class="post-boundary">{basis.boundary}</p>}
   </div>

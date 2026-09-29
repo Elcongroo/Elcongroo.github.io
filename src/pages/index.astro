@@ -1,50 +1,59 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostRow from '../components/PostRow.astro';
+import Status from '../components/Status.astro';
+import StreamEvidence from '../components/StreamEvidence.astro';
 import '../styles/home.css';
 import { getCollection } from 'astro:content';
 import { pathFor } from '../lib/paths';
 import { categories, formatDate, site } from '../lib/site';
 const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf()||Number(b.data.featured)-Number(a.data.featured)||a.data.seriesOrder-b.data.seriesOrder);
+const [firstPost,...otherPosts]=posts;
 const grouped=Object.entries(categories).map(([key,value])=>({key,...value,count:posts.filter(p=>p.data.category===key).length})).filter(c=>c.count>0);
 const labs=(await getCollection('lab',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf());
 const latestLab=labs[0];
+const basis=firstPost?.data.basis;
+const basisHref=basis&&(/^https?:/.test(basis.href)?basis.href:pathFor(basis.href));
+const [titleSubject,...titleRest]=firstPost?.data.title.split('：')??[];
 ---
 <Base>
-  <div class="shell research-home">
-    <header class="research-intro">
-      <h1>文章与札记<span lang="en">Writing</span></h1>
-      <p>从 Socket、TUN 到 IPsec，也读密码算法进入协议的那一段。</p>
+  <div class="shell journal-home">
+    <header class="journal-intro">
+      <div><h1>文章与实验</h1><p>Linux 网络、VPN 协议与密码工程。</p></div>
+      <a class="journal-search" href={pathFor('articles/#search')}>检索文章 <span aria-hidden="true">↗</span></a>
     </header>
-    <div class="research-layout">
-      <section class="research-articles" aria-label="文章摘要">
-        <div class="list-caption"><span>最新文章 <span class="article-count">{posts.length} 篇</span></span><a href={pathFor('articles/#search')}>检索正文 →</a></div>
-        {posts.map((post,index)=><PostRow post={post} headingLevel="h2" lead={index===0}/>)}
-      </section>
-      <aside class="research-sidebar">
-        <section class="sidebar-profile">
-          <h2>关于这里</h2>
-          <p>我是 <span lang="en">congroo</span>，一名从事密码网关研发的工程师。</p>
-          <p>这里放学习笔记、公开资料阅读和独立实验。希望把协议描述和程序实际做的事对上。</p>
-          <a href={pathFor('about/')}>更多关于我 →</a>
-        </section>
-        <section class="sidebar-topics">
-          <h2>按主题阅读</h2>
-          <ul>{grouped.map(c=><li><a href={pathFor(`articles/?category=${c.key}`)}><span>{c.label}<small lang="en">{c.english}</small></span><span>{c.count}</span></a></li>)}</ul>
-        </section>
-        {latestLab&&<section class="sidebar-lab">
-          <h2>实验手记</h2>
-          <p class="lab-caption"><span>{latestLab.data.number}</span><time datetime={latestLab.data.updated.toISOString()}>{formatDate(latestLab.data.updated)}</time></p>
-          <h3><a href={pathFor(`lab/${latestLab.id}/`)}>{latestLab.data.title} →</a></h3>
-          <p>{latestLab.data.description}</p>
-          <p class="lab-question"><strong>还没解决</strong>{latestLab.data.openQuestions[0]}</p>
+    <div class="journal-layout">
+      <div class="journal-main">
+        {firstPost&&<article class="featured-post">
+          <div class="section-label"><span class="editorial-label">最近更新</span><span>{categories[firstPost.data.category].label} / {firstPost.data.kind}</span><time datetime={firstPost.data.updated.toISOString()}>{formatDate(firstPost.data.updated)}</time></div>
+          <h2><a href={pathFor(`articles/${firstPost.id}/`)} aria-label={firstPost.data.title}><span class="title-subject">{titleSubject}{titleRest.length>0&&<span class="title-colon">：</span>}</span>{titleRest.length>0&&<span class="title-detail">{titleRest.join('：')}</span>}</a></h2>
+          <div class:list={['featured-body', {'has-evidence':firstPost.id==='tcp-recv-message-boundary'}]}>
+            <div class="featured-copy">
+              <p class="featured-description">{firstPost.data.description}</p>
+              {firstPost.data.takeaway&&<p class="featured-takeaway"><span>本文要点</span>{firstPost.data.takeaway}</p>}
+              <a class="feature-read" href={pathFor(`articles/${firstPost.id}/`)}>阅读全文 <span aria-hidden="true">↗</span><small>约 {firstPost.data.minutes} 分钟</small></a>
+            </div>
+            {firstPost.id==='tcp-recv-message-boundary'&&<StreamEvidence/>}
+          </div>
+          <div class="featured-footnote"><Status state={firstPost.data.conclusion}/>{basis&&<a href={basisHref}>{basis.label} ↗</a>}</div>
+          {basis&&<p class="featured-boundary">{basis.boundary}</p>}
+        </article>}
+        {otherPosts.length>0&&<section class="journal-entries" aria-labelledby="more-writing">
+          <div class="section-heading"><h2 id="more-writing">更多文章</h2><a href={pathFor('articles/')}>全部 {posts.length} 篇 <span aria-hidden="true">↗</span></a></div>
+          {otherPosts.map(post=><PostRow post={post} compact/>)}
         </section>}
-        <section>
-          <h2>关于文中的结论</h2>
-          <p>实验附执行者与原始输出；资料阅读标明来源。还没验证的部分，也留在文中。</p>
-          <a href={pathFor('about/#editorial')}>内容与修订原则 →</a>
+      </div>
+      <aside class="journal-aside">
+        <section class="author-note">
+          <h2>关于作者</h2><p class="author-name" lang="en">congroo</p>
+          <p>一名从事密码网关研发的工程师。写学习笔记、公开资料阅读和独立实验。</p>
+          <p>希望把协议描述和程序实际做的事对上，也把暂时没弄清的问题留在这里。</p>
+          <a href={pathFor('about/')}>关于我与这个博客 ↗</a>
+          <div class="author-links"><a href={site.github}>GitHub ↗</a><a href={pathFor('subscribe/')}>RSS ↗</a></div>
         </section>
-        <section class="research-links"><a href={site.github}>GitHub ↗</a><a href={pathFor('subscribe/')}>RSS 订阅</a></section>
+        <section class="topic-index"><h2>按主题阅读</h2><ul>{grouped.map(c=><li><a href={pathFor(`articles/?category=${c.key}`)}><span>{c.label}</span><span>{String(c.count).padStart(2,'0')}</span></a></li>)}</ul></section>
+        {latestLab&&<section class="lab-margin"><h2>实验手记</h2><p class="margin-meta"><span>{latestLab.data.number}</span><time datetime={latestLab.data.updated.toISOString()}>{formatDate(latestLab.data.updated)}</time></p><h3><a href={pathFor(`lab/${latestLab.id}/`)}>{latestLab.data.title} ↗</a></h3><p class="open-question"><span>尚待验证</span>{latestLab.data.openQuestions[0]}</p></section>}
+        <section class="editorial-note"><h2>阅读说明</h2><p><span class="status-key verified-key">实验</span>标明执行者、环境与原始输出。</p><p><span class="status-key reference-key">资料</span>区分标准、源码分析与推测。</p><a href={pathFor('about/#editorial')}>内容与修订原则 ↗</a></section>
       </aside>
     </div>
   </div>

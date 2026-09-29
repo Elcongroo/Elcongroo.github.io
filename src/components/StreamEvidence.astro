@@ -1,0 +1,24 @@
+---
+import record from '../../public/downloads/tcp-stream-lab/evidence/run-03.json';
+import { pathFor } from '../lib/paths';
+const cases = record.cases.map(item => ({
+  label: item.case === 'normal' ? '正常收齐' : '提前 EOF',
+  state: item.case,
+  reads: item.recv_calls.filter(call => call.phase.startsWith('payload')),
+  result: item.case === 'normal' ? `${item.input.payload_length} bytes · 完整` : 'PrematureEOF · 已检测',
+  received: item.assembled_payload_hex.length / 2,
+  expected: item.input.payload_length,
+}));
+---
+<figure class="stream-evidence">
+  <div class="evidence-sheet">
+    <div class="evidence-sheet-head"><span>SOCKET / READ TRACE</span><span>run-03</span></div>
+    {cases.map(item=><div class:list={['trace-case', item.state]}>
+      <div class="trace-label"><span class="trace-dot" aria-hidden="true"></span>{item.label}</div>
+      {item.reads.map(call=><div class="trace-line"><code>recv({call.requested})</code><span aria-hidden="true">→</span><strong>{call.received}<small> bytes</small></strong></div>)}
+      <div class="trace-result">{item.result}</div>
+      <div class="trace-progress" role="img" aria-label={`累计收到 ${item.received} 字节，预期 ${item.expected} 字节`}><span style={`width:${item.received/item.expected*100}%`}></span></div>
+    </div>)}
+  </div>
+  <figcaption>从<a href={pathFor('downloads/tcp-stream-lab/evidence/run-03.json')}>原始 JSON</a>提取的应用读取记录。<br/>受控短读实验，不表示 TCP 分段。</figcaption>
+</figure>
