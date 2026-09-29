@@ -1,0 +1,60 @@
+[
+  {
+    "slug": "linux-packet-path",
+    "document": "Linux内核收发包路径：NAPI、sk_buff、路由与Socket.md",
+    "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
+    "sourceSha256": "2b1799d08ff61f19cad2c23469b9f702892c8fd97243f7770ffed940045bb843",
+    "bodySha256": "d7c22cc0893d66cc2b21a98b895f79bbf9a7dcd4b89a3d589c81e735d3611501",
+    "omissions": []
+  },
+  {
+    "slug": "tun-packet-path",
+    "document": "Linux虚拟网络：Namespace、veth、Bridge与TUN.md",
+    "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
+    "sourceSha256": "0e4e2d45bf758604085909b770eae34d2c188859dfccf330eef795af5d61719b",
+    "bodySha256": "3066e62f70a0bde0c6412dd8ad5cd48a0ab71a7db0065663ec3a4c49b351d75b",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-key-derivation",
+    "document": "strongSwan 五链源码精读 03 Proposal与KE到密钥.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "2a35467b13b1bc6ed9b71e9280db4f6889aaa8fb77238b831a386aa37529a726",
+    "bodySha256": "9d7683b297fffad212bcc3893d421f06c86c14f317da95fbb73c6f6a7f82a0d4",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-child-sa-xfrm",
+    "document": "strongSwan 五链源码精读 04 CHILD_SA到XFRM.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "5a70a5fce12ae63cad02077ac4dc8721e13aaea4e951530d0fe429e93e7a0ecd",
+    "bodySha256": "1667f146a75c9c460ca120bda34558776e46a9eafd310568afe83e32b5c08c52",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-data-channel-keys",
+    "document": "OpenVPN 六链源码精读 03 TLS握手到数据通道密钥.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "650a0a3067f3d5efd6e59bbf5862925f15feff1ec19bb220e731071ae1c6bd1c",
+    "bodySha256": "a813f63d39b532c4146bb5648476fef215fe31afd70617c4d298996be727142b",
+    "omissions": []
+  },
+  {
+    "slug": "tls-openvpn-data-channel",
+    "document": "OpenVPN 六链源码精读 04 TUN明文到外层密文.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "918970145b60d69c49d48a4841b6f13d3d9af2d32059e344b7458304be5ad8f1",
+    "bodySha256": "04fdefac1c067396bdf85878ffd565be75b17469e96b4b0decafe7a9ed4cc64f",
+    "omissions": []
+  },
+  {
+    "slug": "vpn-performance-profile",
+    "document": "Linux网络性能与排障：队列、软中断、观测与高速路径.md",
+    "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
+    "sourceSha256": "1db7a0a36edd5ca2d15924b396e067c3533cea614d57c0d5a153e573bf040449",
+    "bodySha256": "a86950e8da38461703a1cd459bf214348bcbb7d6d64c1bf4216e0f6e38772b7c",
+    "omissions": [
+      "第 11 节配套快照工具（未随本次选刊发布）"
+    ]
+  }
+]

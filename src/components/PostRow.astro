@@ -9,12 +9,12 @@ const basis = post.data.basis;
 const basisHref = basis && (/^https?:/.test(basis.href) ? basis.href : pathFor(basis.href));
 ---
 <article class:list={['post-row', { 'post-compact': compact }]}>
-  <div class="post-time"><a class="post-category" href={pathFor(`articles/?category=${post.data.category}`)}>{categories[post.data.category].label}</a><span>{post.data.kind}</span>{post.data.journey?<span class="retrospective-date" title={`回溯阅读坐标；首次公开 ${formatDate(post.data.date)}`}>回溯 <time datetime={post.data.journey.date.toISOString()}>{formatDate(post.data.journey.date)}</time></span>:<time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time>}<span>约 {post.data.minutes} 分钟</span></div>
+  <div class="post-time"><a class="post-category" href={pathFor(`articles/?category=${post.data.category}`)}>{categories[post.data.category].label}</a><span>{post.data.kind}</span><time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time><span>约 {post.data.minutes} 分钟</span></div>
   <div class="post-content">
     <Heading class="post-title"><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}</a></Heading>
     <p class="post-abstract">{post.data.description}</p>
     {!compact&&post.data.takeaway&&<p class="post-takeaway"><strong>要点：</strong>{post.data.takeaway}</p>}
     <div class="post-basis"><Status state={post.data.conclusion}/>{basis&&<a href={basisHref}>{basis.label} ↗</a>}<a class="read-post" href={pathFor(`articles/${post.id}/`)} aria-label={`阅读全文：${post.data.title}`}>阅读全文 →</a></div>
-    {basis&&<p class="post-boundary">{basis.boundary}</p>}
+    {basis&&!compact&&<p class="post-boundary">{basis.boundary}</p>}
   </div>
 </article>

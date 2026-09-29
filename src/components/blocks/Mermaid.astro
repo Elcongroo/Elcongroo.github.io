@@ -6,7 +6,7 @@ const { source, caption } = Astro.props;
 const svg = renderMermaidSVG(source, {
   bg: 'var(--surface)', fg: 'var(--ink)', accent: 'var(--accent)',
   muted: 'var(--muted)', line: 'var(--line-strong)', border: 'var(--line-strong)',
-  font: 'Noto Sans SC, sans-serif',
-}).replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
+  font: 'Noto Serif SC Variable',
+}).replace(/@import\s+url\([^)]*\);?\s*/g, '').replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
 ---
-<figure class="protocol-figure"><div class="diagram-viewport" role="img" aria-label={caption} set:html={svg}/><figcaption>{caption}</figcaption><details class="diagram-source"><summary>查看图示源文本</summary><pre><code>{source}</code></pre></details></figure>
+<figure class="protocol-figure"><div class="diagram-viewport" role="img" aria-label={caption} set:html={svg}/><figcaption>{caption}</figcaption><details class="diagram-source" data-pagefind-ignore><summary>查看图示源文本</summary><pre><code>{source}</code></pre></details></figure>

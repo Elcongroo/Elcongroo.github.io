@@ -20,7 +20,7 @@ const posts = defineCollection({
     kind: z.string(),
     minutes: z.number().positive(),
     featured: z.boolean().default(false),
-    journey: z.object({ date: z.coerce.date(), order: z.number().int().positive(), question: z.string() }).optional(),
+    provenance: z.object({ title: z.string(), mode: z.string(), omissions: z.array(z.string()).default([]) }).optional(),
     series: z.string(),
     seriesOrder: z.number().int().nonnegative(),
     difficulty: z.enum(['入门', '进阶', '专题研究']),
@@ -37,8 +37,7 @@ const posts = defineCollection({
     message: '实验验证状态必须与 realVerified 一致。',
   }).refine(data => !data.realVerified || data.evidence.length > 0, {
     message: '已验证文章必须提供原始证据。',
-  }).refine(data => !data.journey || data.journey.date <= data.date, {
-    message: '回溯坐标不能晚于首次公开日期。',
+
   }),
 });
 const lab = defineCollection({

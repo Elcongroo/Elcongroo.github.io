@@ -8,4 +8,4 @@ export function getStaticPaths(){return topics.map(topic=>({params:{id:topic.id}
 const {topic}=Astro.props;
 const posts=(await getCollection('posts',({data})=>!data.draft)).filter(p=>topic.categories.includes(p.data.category)||(topic.id==='engineering'&&p.data.tags.includes('验证方法')));
 ---
-<Base title={topic.name}><div class="shell"><header class="page-head"><div class="page-kicker">INDEX / {topic.number}</div><h1>{topic.name}</h1><p>{topic.description}</p></header><div class="archive">{posts.map(post=><PostRow post={post}/>)}<a class="outline-link" href={pathFor('topics/')}>全部主题</a></div></div></Base>
+<Base title={topic.name}><div class="shell"><header class="page-head"><div class="page-kicker">INDEX / {topic.number}</div><h1>{topic.name}</h1><p>{topic.description}</p></header><div class="archive">{posts.length===0&&<p class="empty-note">这个主题尚未选刊文章，可先查看 <a href={pathFor('journey/')}>技术框架</a> 中的位置。</p>}{posts.map(post=><PostRow post={post}/>)}<a class="outline-link" href={pathFor('topics/')}>全部主题</a></div></div></Base>

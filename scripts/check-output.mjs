@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import {createHash} from 'node:crypto';
 
 const root = path.resolve('dist');
 const base = (process.env.BASE_PATH || '/').replace(/\/$/, '');
@@ -12,9 +13,10 @@ const ids = new Map([...html].map(([f,s])=>[f,new Set([...s.matchAll(/\bid="([^"
 let refs=0;
 for (const [file,content] of html) {
   if(content.includes('__VITE_PRELOAD__'))errors.push(`${file}: unresolved script preload marker`);
+  const isRedirect=content.includes('http-equiv="refresh"');
   const headings=[...content.matchAll(/<h1[\s>]/g)];
-  if(headings.length!==1)errors.push(`${path.relative(root,file)}: expected one h1`);
-  if(!content.includes('name="description"'))errors.push(`${file}: missing description`);
+  if(!isRedirect&&headings.length!==1)errors.push(`${path.relative(root,file)}: expected one h1`);
+  if(!isRedirect&&!content.includes('name="description"'))errors.push(`${file}: missing description`);
   for(const m of content.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
     const ref=m[1].replaceAll('&amp;','&');
     if(/^(?:[a-z][a-z\d+.-]*:|\/\/)/i.test(ref))continue;
@@ -43,9 +45,23 @@ const sitemap=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
 const indexed=[...html.values()].filter(s=>s.includes('data-pagefind-body')).length;
 const rssCount=[...rss.matchAll(/<item>/g)].length;
 if(rssCount!==indexed)errors.push(`RSS items ${rssCount} differ from indexable content ${indexed}`);
-if([...sitemap.matchAll(/<url>/g)].length!==html.size-1)errors.push('Sitemap does not cover all normal HTML pages');
+const redirects=[...html.values()].filter(s=>s.includes('http-equiv="refresh"')).length;
+if([...sitemap.matchAll(/<url>/g)].length!==html.size-1-redirects)errors.push('Sitemap does not cover all normal HTML pages');
 for (const [file, content] of html) {
   if(content.includes('class="diagram-viewport"')&&!content.includes('<svg'))errors.push(`${file}: build-time protocol SVG missing`);
 }
-console.log(JSON.stringify({base:base||'/',htmlPages:html.size,localReferences:refs,rssItems:rssCount,indexedDocuments:indexed,errors},null,2));
+// Imported prose must remain consistent with the selected manuscript snapshot.
+const sources=JSON.parse(fs.readFileSync('src/data/publication-sources.json','utf8'));
+let originalDiagrams=0;
+for(const source of sources){
+  const markdown=fs.readFileSync(`src/content/posts/${source.slug}.md`,'utf8');
+  const body=markdown.slice(markdown.indexOf('\n---\n')+5).trim()+'\n';
+  if(createHash('sha256').update(body).digest('hex')!==source.bodySha256)errors.push(`${source.slug}: selected manuscript body changed`);
+  const diagrams=[...body.matchAll(/^```mermaid/gm)].length;
+  const output=fs.readFileSync(path.join(root,`articles/${source.slug}/index.html`),'utf8');
+  if([...output.matchAll(/class="diagram-viewport"/g)].length!==diagrams)errors.push(`${source.slug}: original diagram count differs`);
+  if(output.includes('fonts.googleapis.com'))errors.push(`${source.slug}: diagram adds an external font request`);
+  originalDiagrams+=diagrams;
+}
+console.log(JSON.stringify({originalManuscripts:sources.length,originalDiagrams,base:base||'/',htmlPages:html.size,localReferences:refs,rssItems:rssCount,indexedDocuments:indexed,errors},null,2));
 if(errors.length)process.exitCode=1;

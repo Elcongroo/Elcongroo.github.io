@@ -1,16 +1,53 @@
 ---
 import Base from '../layouts/Base.astro';
-import Status from '../components/Status.astro';
 import { getCollection } from 'astro:content';
 import { pathFor } from '../lib/paths';
-import { formatDate } from '../lib/site';
-const chapters=(await getCollection('posts',({data})=>!data.draft&&!!data.journey)).sort((a,b)=>a.data.journey!.order-b.data.journey!.order);
+import { stack, crossSections } from '../data/system-stack';
+import '../styles/stack.css';
+const posts=await getCollection('posts',({data})=>!data.draft);
+const lookup=new Map(posts.map(p=>[p.id,p]));
+const rows=[['product'],['management'],['control'],['ipsec','tls'],['crypto'],['provider'],['xfrm'],['linux'],['platform'],['performance'],['fast-path'],['rdma']];
 ---
-<Base title="研究主线" description="从 7 月 15 日入职开始，回看 Linux 内核、IPsec / TLS 与高性能网络之间的一条连续阅读线。">
-  <div class="reading-shell journey-page">
-    <header class="page-head"><div class="page-kicker">READING THREAD / 研究主线</div><h1>沿着一条安全通信链路</h1><p>包怎样经过内核，协议怎样建立保护，性能问题又在哪里出现。</p></header>
-    <div class="journey-editorial"><p>2026 年 7 月 15 日入职是这条线的起点。我从已有的源码阅读和研究笔记里选出七个问题，按“内核 → 隧道 → 协议 → 性能”重新编排。</p><p><strong>日期说明：</strong>下列日期是每隔 12 天安排的回溯阅读坐标，用来组织这段起步阶段的思考，不能据此推断某一天已经完成了相应研究。文章均于 <time datetime="2026-09-29">2026-09-29</time> 整理公开，原始实验日期另见实验记录。</p></div>
-    <ol class="journey-chapters">{chapters.map(post=><li><div class="journey-marker"><span>{String(post.data.journey!.order).padStart(2,'0')}</span><time datetime={post.data.journey!.date.toISOString()}>{formatDate(post.data.journey!.date).slice(5).replace('-','.')}</time></div><article><p class="journey-question">{post.data.journey!.question}</p><h2><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}</a></h2><p>{post.data.description}</p><div class="journey-chapter-meta"><Status state={post.data.conclusion}/><a href={pathFor(`articles/${post.id}/`)}>阅读第 {post.data.journey!.order} 篇 ↗</a></div></article></li>)}</ol>
-    <section class="journey-afterword prose"><h2>这条线会怎样继续</h2><p>下一步是给性能问题补上独立环境、原始数据与对照实验；给源码推断补上运行时的路径验证。eBPF、XDP、DPDK 与硬件卸载会按实际问题进入记录。</p><p>基础实验与密码算法接入的补充内容，继续保留在 <a href={pathFor('articles/')}>文章归档</a> 中。</p></section>
+<Base title="技术主线" description="高性能安全通信系统栈：从协议控制面、密码工程到 Linux 数据面与性能分析，按技术模块阅读 congroo 的源码笔记。">
+  <div class="shell stack-page">
+    <header class="stack-header"><div><div class="page-kicker">SYSTEM STACK / 技术主线</div><h1>高性能安全通信系统栈</h1><p>协议、密码、内核与性能，放在同一张图里读。</p></div><a href={pathFor('articles/')}>全部文章 ↗</a></header>
+    <div class="stack-caption"><p>选自我的完整技术框架。<strong>点选模块，查看相关源码解读。</strong></p><span>13 个技术模块 / 4 条横向线索</span></div>
+    <div class="stack-layout" data-stack-map>
+      <figure class="system-map" id="technical-map">
+        <figcaption><span>01—13 / 技术分层</span><span>层次关系，非报文执行顺序</span></figcaption>
+        <div class="map-layers">{rows.map((row,index)=><div class:list={['map-row',`columns-${row.length}`,{'row-first':index===0}]}>{row.map(id=>{const node=stack.find(n=>n.id===id)!;return <a href={`#${node.id}`} data-module={node.id} class:list={['map-module',node.group]}><span class="module-top"><span class="module-number">{node.no}</span><span class="module-count">{node.articles.length?`${node.articles.length} 篇 ↗`:'未选刊'}</span></span><strong>{node.title}</strong><span class="module-brief">{node.brief}</span></a>;})}</div>)}</div>
+        <div class="map-cross-links"><span>横向贯穿</span><a href="#cross-pqc">PQC 迁移 ↘</a><a href="#cross-network-conditions">特殊网络场景 ↘</a><a href="#cross-languages">编程与自动化 ↘</a><a href="#cross-toolchain">工具链 ↘</a></div>
+      </figure>
+      <aside class="stack-reader" aria-label="模块详情与文章">
+        <div class="reader-label"><span>从框架进入正文</span><a class="return-to-map" href="#technical-map">↑ 返回框架</a><span class="reader-arrow" aria-hidden="true">↙</span></div>
+        {stack.map(node=><section id={node.id} class:list={['module-reading',node.group]} data-reading={node.id} tabindex="-1">
+          <p class="reader-coordinate">LAYER {node.no} / {node.english}</p><h2>{node.title}</h2>
+          <div class="module-articles"><h3>相关文章</h3>{node.articles.length?<ol>{node.articles.map(id=>{const post=lookup.get(id);return post&&<li><a href={pathFor(`articles/${id}/`)}>{post.data.title}<span aria-hidden="true">↗</span></a><small>{post.data.kind} · 约 {post.data.minutes} 分钟</small></li>;})}</ol>:<p class="module-unpublished">这一模块尚未选刊文章，先保留技术位置。</p>}</div>
+          <details class="module-scope" open><summary>原框架中的技术范围</summary><dl>{node.scope.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details>
+        </section>)}
+        <p class="stack-reader-note">图中的条目表示研究范围；文章里的分析和实验各自标注版本与验证状态。</p>
+      </aside>
+    </div>
+    <section class="cross-section" aria-labelledby="cross-heading"><header><div class="page-kicker">CROSS-CUTTING CONCERNS</div><h2 id="cross-heading">贯穿各层的问题与工具</h2><p>这些内容会同时影响多个模块，在框架旁边保留独立的位置。</p></header><div class="cross-grid">{crossSections.map(item=><article id={`cross-${item.id}`}><span class="cross-subtitle">{item.subtitle}</span><h3>{item.title}</h3><ul>{item.terms.map(t=><li>{t}</li>)}</ul><div class="cross-related">{item.links.map(id=><a href={`#${id}`} data-module={id}>{stack.find(n=>n.id===id)!.title} ↗</a>)}</div></article>)}</div></section>
+    <footer class="stack-source"><span>框架来源</span><p>《高性能安全通信系统栈》中的技术部分，保留原图 01–13 的模块编号与横向线索。网页将长图重排为模块导航，原图中的示意性能数字不作为实验结果展示。</p></footer>
   </div>
+  <script>
+    const map=document.querySelector<HTMLElement>('[data-stack-map]');
+    if(map){
+      const panels=[...map.querySelectorAll<HTMLElement>('[data-reading]')];
+      const links=[...document.querySelectorAll<HTMLAnchorElement>('[data-module]')];
+      const select=(id:string,focus=false)=>{
+        const panel=panels.find(p=>p.dataset.reading===id);
+        if(!panel)return false;
+        panels.forEach(p=>p.hidden=p!==panel);
+        links.forEach(a=>{const active=a.dataset.module===id;a.classList.toggle('is-active',active);if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
+        if(focus){panel.focus({preventScroll:true});if(matchMedia('(max-width: 800px)').matches)panel.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
+        return true;
+      };
+      map.classList.add('map-enhanced');
+      select(location.hash.slice(1))||select('linux');
+      links.forEach(a=>a.addEventListener('click',event=>{if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;const id=a.dataset.module!;if(select(id,true)){event.preventDefault();history.pushState(null,'',`#${id}`);}}));
+      window.addEventListener('popstate',()=>{select(location.hash.slice(1))||select('linux');});
+    }
+  </script>
 </Base>

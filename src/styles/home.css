@@ -81,7 +81,6 @@
 .verified-key { color: var(--success); }
 .reference-key { color: var(--body); }
 .series-introduction { font-size:.8125rem; color:var(--muted); margin:-8px 0 25px; line-height:1.85; }
-.journal-entries .retrospective-date time { margin:0; }
 .supplemental-reading ul { list-style:none; padding:0; margin:0; }
 .supplemental-reading li { display:grid; grid-template-columns:110px minmax(0,1fr); gap:23px; padding:15px 0; border-bottom:1px solid var(--line); }
 .supplemental-reading li>span { font:.6875rem/2 var(--sans); color:var(--muted); }
