@@ -3,13 +3,15 @@ import type { CollectionEntry } from 'astro:content';
 import { formatDate, categories } from '../lib/site';
 import { pathFor } from '../lib/paths';
 import Status from './Status.astro';
+import { publicationTimeline } from '../lib/publication';
 interface Props { post: CollectionEntry<'posts'>; headingLevel?: 'h2' | 'h3'; compact?: boolean; }
 const { post, headingLevel: Heading = 'h3', compact = false } = Astro.props;
+const timeline = publicationTimeline(post);
 const basis = post.data.basis;
 const basisHref = basis && (/^https?:/.test(basis.href) ? basis.href : pathFor(basis.href));
 ---
 <article class:list={['post-row', { 'post-compact': compact }]}>
-  <div class="post-time"><a class="post-category" href={pathFor(`articles/?category=${post.data.category}`)}>{categories[post.data.category].label}</a><span>{post.data.kind}</span><time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time><span>约 {post.data.minutes} 分钟</span></div>
+  <div class="post-time"><a class="post-category" href={pathFor(`articles/?category=${post.data.category}`)}>{categories[post.data.category].label}</a><span>{post.data.kind}</span><span>{timeline.latestLabel} <time datetime={timeline.latest.toISOString()}>{formatDate(timeline.latest)}</time></span><span>约 {post.data.minutes} 分钟</span></div>
   <div class="post-content">
     <Heading class="post-title"><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}</a></Heading>
     <p class="post-abstract">{post.data.description}</p>

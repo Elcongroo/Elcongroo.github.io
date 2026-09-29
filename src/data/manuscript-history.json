@@ -1,0 +1,254 @@
+{
+  "gmt0022-strongswan-gap": {
+    "firstRecorded": "2026-09-22",
+    "commit": "dc3c94f8f4dd0cb92e9799f064e4c2da0339bc8d"
+  },
+  "ipsec-protocols": {
+    "firstRecorded": "2026-09-18",
+    "commit": "48a0b2b464e39a9f09a1683f12a6cabc582324b2"
+  },
+  "linux-socket-tcp-udp": {
+    "firstRecorded": "2026-09-27",
+    "commit": "32d9b03c62ed7a611995849550d4fe82fb1393fe"
+  },
+  "linux-xfrm-esp": {
+    "firstRecorded": "2026-09-28",
+    "commit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f"
+  },
+  "linux-kernel-guide": {
+    "firstRecorded": "2026-09-28",
+    "commit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f"
+  },
+  "linux-kernel-basics": {
+    "firstRecorded": "2026-09-28",
+    "commit": "5bdc41162f4060aa940b6d53c1ee82c14f633407"
+  },
+  "linux-packet-path": {
+    "firstRecorded": "2026-09-28",
+    "commit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f"
+  },
+  "vpn-performance-profile": {
+    "firstRecorded": "2026-09-28",
+    "commit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f"
+  },
+  "tun-packet-path": {
+    "firstRecorded": "2026-09-28",
+    "commit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f"
+  },
+  "netfilter-conntrack-nat": {
+    "firstRecorded": "2026-09-28",
+    "commit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f"
+  },
+  "openvpn-architecture": {
+    "firstRecorded": "2026-09-17",
+    "commit": "7dd73395108e0bfbb7c353798c50e841995eb31d"
+  },
+  "openvpn-tls-key-state": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-tongsuo-dual-cert": {
+    "firstRecorded": "2026-09-17",
+    "commit": "7dd73395108e0bfbb7c353798c50e841995eb31d"
+  },
+  "openvpn-guomi-extension": {
+    "firstRecorded": "2026-09-17",
+    "commit": "9ec429c7dc9fa139600699ad8ab3a388e97fb519"
+  },
+  "openvpn-layer-map": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-flow-map": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-config-context": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-control-tls": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-data-channel-keys": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "tls-openvpn-data-channel": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-receive-tun": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-dco-keys": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-packet-rekey-dco": {
+    "firstRecorded": "2026-09-24",
+    "commit": "3ac30e59cff8c1b17038af92215012d8eafc24cf"
+  },
+  "openvpn-source-index": {
+    "firstRecorded": "2026-09-18",
+    "commit": "fdab3fa8964ec2e68641aca89130503a46d52d35"
+  },
+  "openvpn-reading-method": {
+    "firstRecorded": "2026-09-24",
+    "commit": "1bdc2f033de236c8eb0e1894f8a7e1dba3d3a993"
+  },
+  "openvpn-design-model": {
+    "firstRecorded": "2026-09-24",
+    "commit": "fe6edf00148d0067407ee718c185ec183afc5fee"
+  },
+  "tls-tlcp-protocols": {
+    "firstRecorded": "2026-09-18",
+    "commit": "48a0b2b464e39a9f09a1683f12a6cabc582324b2"
+  },
+  "vpn-benchmark-method": {
+    "firstRecorded": "2026-09-28",
+    "commit": "83c3e0609007c2540131ad08925bc2f3d8e325d8"
+  },
+  "strongswan-architecture": {
+    "firstRecorded": "2026-09-17",
+    "commit": "7dd73395108e0bfbb7c353798c50e841995eb31d"
+  },
+  "strongswan-ikev1-task-manager": {
+    "firstRecorded": "2026-09-24",
+    "commit": "ff96ef7cf263ed907794ec1b05c3e6450579c260"
+  },
+  "strongswan-ikev2-task-manager": {
+    "firstRecorded": "2026-09-24",
+    "commit": "ff96ef7cf263ed907794ec1b05c3e6450579c260"
+  },
+  "strongswan-ikev2-key-lifecycle": {
+    "firstRecorded": "2026-09-21",
+    "commit": "78d96c67436e0b5075ea2940d84e66b9a7b0096d"
+  },
+  "ikev2-reference-lab": {
+    "firstRecorded": "2026-09-28",
+    "commit": "83c3e0609007c2540131ad08925bc2f3d8e325d8"
+  },
+  "pqc-ike-reference": {
+    "firstRecorded": "2026-09-29",
+    "commit": "c9076bbe64d4657f968ef3d0f228af309cbcc44b"
+  },
+  "strongswan-proposal-xfrm": {
+    "firstRecorded": "2026-09-17",
+    "commit": "7dd73395108e0bfbb7c353798c50e841995eb31d"
+  },
+  "strongswan-guomi-extension": {
+    "firstRecorded": "2026-09-17",
+    "commit": "9ec429c7dc9fa139600699ad8ab3a388e97fb519"
+  },
+  "strongswan-config-ike-sa": {
+    "firstRecorded": "2026-09-22",
+    "commit": "ba29761c005a68abb466917536f52ea88be34c0e"
+  },
+  "strongswan-packet-task": {
+    "firstRecorded": "2026-09-22",
+    "commit": "ba29761c005a68abb466917536f52ea88be34c0e"
+  },
+  "strongswan-key-derivation": {
+    "firstRecorded": "2026-09-22",
+    "commit": "ba29761c005a68abb466917536f52ea88be34c0e"
+  },
+  "strongswan-child-sa-xfrm": {
+    "firstRecorded": "2026-09-22",
+    "commit": "ba29761c005a68abb466917536f52ea88be34c0e"
+  },
+  "strongswan-ip-packet-esp": {
+    "firstRecorded": "2026-09-22",
+    "commit": "ba29761c005a68abb466917536f52ea88be34c0e"
+  },
+  "strongswan-layer-map": {
+    "firstRecorded": "2026-09-24",
+    "commit": "ff96ef7cf263ed907794ec1b05c3e6450579c260"
+  },
+  "strongswan-flow-map": {
+    "firstRecorded": "2026-09-22",
+    "commit": "dc3c94f8f4dd0cb92e9799f064e4c2da0339bc8d"
+  },
+  "ikev2-single-vm-lab": {
+    "firstRecorded": "2026-09-23",
+    "commit": "bad3a76702e88fd47428249da58e0c716cc9972a"
+  },
+  "strongswan-study-route": {
+    "firstRecorded": "2026-09-22",
+    "commit": "eda3d00562c8b4e06df8a1740b658c9401b9ee2c"
+  },
+  "strongswan-source-index": {
+    "firstRecorded": "2026-09-18",
+    "commit": "fdab3fa8964ec2e68641aca89130503a46d52d35"
+  },
+  "strongswan-reading-method": {
+    "firstRecorded": "2026-09-24",
+    "commit": "eee9bc066e13aba52884c7609f0800dddfa32d7b"
+  },
+  "strongswan-design-model": {
+    "firstRecorded": "2026-09-23",
+    "commit": "6774ec4ef21e3aebcd4baa4357a0f7d3d45d4d14"
+  },
+  "network-programming-vpn": {
+    "firstRecorded": "2026-09-27",
+    "commit": "32d9b03c62ed7a611995849550d4fe82fb1393fe"
+  },
+  "pqc-gateway-fundamentals": {
+    "firstRecorded": "2026-09-27",
+    "commit": "0bc9b30d22b90c6380d693c04778290936e03342"
+  },
+  "gateway-module-boundaries": {
+    "firstRecorded": "2026-09-23",
+    "commit": "6774ec4ef21e3aebcd4baa4357a0f7d3d45d4d14"
+  },
+  "guomi-mapping-matrix": {
+    "firstRecorded": "2026-09-17",
+    "commit": "7803bcde6f366f732c6ebd85f112fa6ae4eab86a"
+  },
+  "gateway-assessment": {
+    "firstRecorded": "2026-09-28",
+    "commit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7"
+  },
+  "crypto-agility-evolution": {
+    "firstRecorded": "2026-09-28",
+    "commit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7"
+  },
+  "gateway-platform-evolution": {
+    "firstRecorded": "2026-09-28",
+    "commit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7"
+  },
+  "gateway-fast-path-evolution": {
+    "firstRecorded": "2026-09-28",
+    "commit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7"
+  },
+  "gateway-evolution-map": {
+    "firstRecorded": "2026-09-28",
+    "commit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7"
+  },
+  "crypto-provider-kdf-map": {
+    "firstRecorded": "2026-09-28",
+    "commit": "83c3e0609007c2540131ad08925bc2f3d8e325d8"
+  },
+  "standard-source-evidence": {
+    "firstRecorded": "2026-09-28",
+    "commit": "83c3e0609007c2540131ad08925bc2f3d8e325d8"
+  },
+  "gateway-industry-paths": {
+    "firstRecorded": "2026-09-27",
+    "commit": "0bc9b30d22b90c6380d693c04778290936e03342"
+  },
+  "gateway-network-glossary": {
+    "firstRecorded": "2026-09-27",
+    "commit": "0bc9b30d22b90c6380d693c04778290936e03342"
+  },
+  "network-programming-guide": {
+    "firstRecorded": "2026-09-27",
+    "commit": "32d9b03c62ed7a611995849550d4fe82fb1393fe"
+  },
+  "nonblocking-epoll": {
+    "firstRecorded": "2026-09-27",
+    "commit": "32d9b03c62ed7a611995849550d4fe82fb1393fe"
+  }
+}

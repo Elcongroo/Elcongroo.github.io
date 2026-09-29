@@ -156,3 +156,42 @@
   .trace-line small { display:none; }
   .trace-label::after { content:' / bytes'; font-family:var(--mono); font-size:.5625rem; color:#acb9af; }
 }
+
+/* The front page is an edited reading path; the full inventory lives in the archive. */
+.home-method { margin:-7px 0 29px; max-width:850px; color:var(--body); font-size:1rem; line-height:1.9; }
+.featured-evidence-label { margin-left:auto; color:var(--body); }
+.journal-aside .research-focus { font:600 1rem/1.6 var(--mono); color:var(--ink); }
+.journal-aside h2 { font-size:.8125rem; color:var(--body); }
+.journal-entries .post-time,.journal-entries .post-time time,.journal-entries .post-basis { font-size:.75rem; }
+.journal-entries .post-time time { margin:0; }
+.series-introduction { font-size:.9375rem; line-height:1.9; color:var(--body); }
+.home-lab { margin:32px 0; }
+.home-lab h3 { font-size:1.25rem; line-height:1.6; margin:9px 0; }
+.home-lab>p { font-size:.9375rem; line-height:1.85; }
+.home-lab .lab-dateline { display:flex; flex-wrap:wrap; gap:5px 18px; font:.75rem/1.9 var(--sans); color:var(--muted); }
+.home-lab .lab-limit { font-size:.8125rem; color:var(--muted); }
+.archive-door { padding:22px 0 8px; border-top:2px solid var(--ink); }
+.archive-door h2 { font-size:1.15rem; margin:0 0 10px; }
+.archive-door p { font-size:.9375rem; line-height:1.9; max-width:650px; }
+.archive-door>a { font-size:.9375rem; text-decoration:underline; text-underline-offset:5px; }
+.archive-door details { margin-top:24px; font:.8125rem/1.9 var(--sans); color:var(--muted); }
+.archive-door summary { cursor:pointer; }
+@media (max-width:900px) {
+  .journal-layout { display:flex; flex-direction:column; gap:25px; }
+  .journal-aside { order:-1; width:100%; display:block; padding:0; }
+  .journal-aside .current-research { border-top:1px solid var(--line); padding:14px 0; margin:0; }
+  .journal-aside .current-research h2 { margin:0 0 8px; }
+  .journal-aside .research-focus { display:none; }
+  .journal-aside .current-research p { font-size:.9375rem; line-height:1.8; margin-bottom:8px; }
+  .journal-aside .author-note { display:none; }
+  .journal-intro { align-items:flex-start; }
+  .journal-intro>div { display:block; }
+  .journal-intro h1 { margin-bottom:6px; }
+  .home-method { margin-bottom:18px; }
+}
+@media (max-width:600px) {
+  .journal-intro h1 { font-size:1.45rem; }
+  .journal-entries .post-time,.journal-entries .post-time time { font-size:.8125rem; }
+  .featured-evidence-label { margin-left:0; }
+  .home-method { font-size:.9375rem; }
+}

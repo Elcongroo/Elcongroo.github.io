@@ -1,0 +1,12 @@
+---
+import { featuredStudies } from '../data/featured-studies';
+import { pathFor } from '../lib/paths';
+interface Props { id: string; }
+const study = featuredStudies.find(item => item.id === Astro.props.id);
+---
+{study&&<section class="study-evidence" aria-labelledby="study-evidence-title">
+  <h2 id="study-evidence-title">把这条源码链与运行记录对照</h2>
+  <p>{study.observation}</p>
+  <p class="evidence-boundary">原始日志与 PCAP 暂不公开，下方链接为运行摘要，不是公开证据包。</p><p><a href={pathFor('lab/ipsec-single-vm-evidence/')}>阅读 2026-09-23 实验摘要 →</a></p>
+  <details><summary>固定版本源码入口</summary><ul>{study.sources.map(source=><li><a href={source.url}><code>{source.name}</code><small>{source.path}:{source.line}</small></a></li>)}</ul><p class="evidence-boundary">strongSwan 链接固定到 6.0.3 的 commit；内核链接使用原文的 v6.6 标签。历史实验文档记录的运行版本是 strongSwan 6.0.4 / Linux 7.0.0。这些源码坐标不是运行时调用栈。</p></details>
+</section>}

@@ -7,7 +7,7 @@ never discovers or publishes files on its own; the public manifest records hashe
 from pathlib import Path
 import argparse, re, json, hashlib, subprocess, math
 p=argparse.ArgumentParser();p.add_argument('docs');p.add_argument('--catalog',required=True);p.add_argument('--check',action='store_true');args=p.parse_args()
-root=Path(__file__).resolve().parents[1];source=Path(args.docs).resolve();config=json.loads(Path(args.catalog).read_text());manifest=[]
+root=Path(__file__).resolve().parents[1];source=Path(args.docs).resolve();config=json.loads(Path(args.catalog).read_text());manifest=[];history={}
 def section_cut(body,n):
  return re.sub(r'^## '+str(n)+r'\.(?: |[^\d]).*?(?=^## \d+\.|^## 参考|\Z)','',body,flags=re.M|re.S)
 def safe_text(s):
@@ -48,9 +48,13 @@ for entry in config['entries']:
  if historical:body='> **原稿实验记录**：以下保留原稿中的实验方法、观察与结果。本页未提供完整原始证据包，脚本路径是原实验资产的定位信息，不是本站下载地址。本次整理没有重跑实验，也不把这些记录标为已公开复核的实测结果。\n\n'+body
  body=body.strip()+'\n'
  commit=subprocess.check_output(['git','log','-1','--format=%H','--',str(source/name)],cwd=source,text=True).strip()
+ records=subprocess.check_output(['git','log','--follow','--format=%cs %H','--',str(source/name)],cwd=source,text=True).strip().splitlines()
+ if records:
+  first_date,first_commit=records[-1].split();history[slug]=dict(firstRecorded=first_date,commit=first_commit)
  strong='strongSwan' in name;vpn='OpenVPN' in name
  href='https://github.com/strongswan/strongswan/tree/472dcd8bb50a91f156b725ff56992352b573f7dd' if strong else 'https://github.com/OpenVPN/openvpn/tree/v2.7.4' if vpn else None
  baseline=['strongSwan 6.0.3；源码快照与本地适配边界见正文'] if strong else ['OpenVPN 2.7.4；涉及 Tongsuo 时按正文指定版本'] if vpn else ['以正文分别引用的内核、协议和工具版本为准']
+ if slug=='ikev2-single-vm-lab':baseline=['实操版本按原稿记载：strongSwan 6.0.4 / Linux 7.0.0 / Ubuntu 26.04.1；未附版本命令输出','配套源码分析：strongSwan 6.0.3 / Linux v6.6']
  # Prefer source-provided reading estimates; never count source-code bytes as Chinese prose.
  m=re.search(r'预计精读\*\*：\s*(\d+)[–—-](\d+)',raw)
  minutes=int(m[2]) if m else max(8,math.ceil(len(re.findall(r'[\u4e00-\u9fff]',body))/260)+len(re.findall(r'^```',body,re.M))//2)
@@ -66,4 +70,7 @@ for entry in config['entries']:
 manifest_text=json.dumps(manifest,ensure_ascii=False,indent=2)+'\n';target=root/'src/data/publication-sources.json'
 if args.check:assert target.read_text()==manifest_text,'Manifest differs'
 else:target.write_text(manifest_text)
+history_text=json.dumps(history,ensure_ascii=False,indent=2)+'\n';history_target=root/'src/data/manuscript-history.json'
+if args.check:assert history_target.read_text()==history_text,'Manuscript history differs'
+else:history_target.write_text(history_text)
 print(f'{len(manifest)} original technical manuscripts '+('match catalog and sources.' if args.check else 'imported.'))

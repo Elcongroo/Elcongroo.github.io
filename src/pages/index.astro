@@ -2,66 +2,67 @@
 import Base from '../layouts/Base.astro';
 import PostRow from '../components/PostRow.astro';
 import Status from '../components/Status.astro';
-import StreamEvidence from '../components/StreamEvidence.astro';
-import publications from '../data/publication-sources.json';
 import ChildSaPreview from '../components/ChildSaPreview.astro';
 import '../styles/home.css';
 import { getCollection } from 'astro:content';
 import { pathFor } from '../lib/paths';
-import { categories, formatDate, site } from '../lib/site';
-const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>Number(b.data.featured)-Number(a.data.featured)||b.data.updated.valueOf()-a.data.updated.valueOf()||a.data.seriesOrder-b.data.seriesOrder);
-const firstPost=posts[0];
-const corePosts=posts.filter(p=>p.data.provenance&&p.id!==firstPost?.id).sort((a,b)=>publications.findIndex(s=>s.slug===a.id)-publications.findIndex(s=>s.slug===b.id)).slice(0,6);
-const supplements=posts.filter(p=>!p.data.provenance&&p.id!==firstPost?.id);
-const grouped=Object.entries(categories).map(([key,value])=>({key,...value,count:posts.filter(p=>p.data.category===key).length})).filter(c=>c.count>0);
-const labs=(await getCollection('lab',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf());
-const latestLab=labs[0];
-const basis=firstPost?.data.basis;
-const basisHref=basis&&(/^https?:/.test(basis.href)?basis.href:pathFor(basis.href));
-const [titleSubject,...titleRest]=firstPost?.data.title.split('：')??[];
+import { site } from '../lib/site';
+const posts=await getCollection('posts',({data})=>!data.draft);
+const firstPost=posts.find(p=>p.id==='strongswan-child-sa-xfrm')!;
+const corePosts=['strongswan-config-ike-sa','strongswan-ip-packet-esp'].map(id=>posts.find(p=>p.id===id)!);
+const [titleSubject,...titleRest]=firstPost.data.title.split('：');
 ---
 <Base>
   <div class="shell journal-home">
     <header class="journal-intro">
-      <div><h1>文章与实验</h1><p>Linux 内核 · IPsec / TLS · 高性能网络</p></div>
+      <div><h1>congroo 的技术笔记</h1><p>Linux 内核 · IPsec / TLS · 高性能网络</p></div>
       <a class="journal-search" href={pathFor('articles/#search')}>检索文章 <span aria-hidden="true">↗</span></a>
     </header>
+    <p class="home-method">我做密码网关研发。沿着一个包的路径，追踪协议状态、密码材料与 Linux 数据面如何交接。</p>
     <div class="journal-layout">
       <div class="journal-main">
-        {firstPost&&<article class="featured-post">
-          <div class="section-label"><span class="editorial-label">最近更新</span><span>{categories[firstPost.data.category].label} / {firstPost.data.kind}</span><time datetime={firstPost.data.updated.toISOString()}>{formatDate(firstPost.data.updated)}</time></div>
-          <h2><a href={pathFor(`articles/${firstPost.id}/`)} aria-label={firstPost.data.title}><span class="title-subject">{titleSubject}{titleRest.length>0&&<span class="title-colon">：</span>}</span>{titleRest.length>0&&<span class="title-detail">{titleRest.join('：')}</span>}</a></h2>
-          <div class:list={['featured-body', {'has-evidence':['tcp-recv-message-boundary','strongswan-child-sa-xfrm'].includes(firstPost.id)}]}>
+        <article class="featured-post">
+          <div class="section-label"><span class="editorial-label">重点阅读</span><span>strongSwan 五链 / 内核交接</span><span class="featured-evidence-label">附关联实验摘要</span></div>
+          <h2><a href={pathFor(`articles/${firstPost.id}/`)} aria-label={firstPost.data.title}><span class="title-subject">{titleSubject}<span class="title-colon">：</span></span><span class="title-detail">{titleRest.join('：')}</span></a></h2>
+          <div class="featured-body has-evidence">
             <div class="featured-copy">
               <p class="featured-description">{firstPost.data.description}</p>
-              {firstPost.data.takeaway&&<p class="featured-takeaway"><span>本文要点</span>{firstPost.data.takeaway}</p>}
+              <p class="featured-takeaway"><span>这里最容易混淆的边界</span>charon 完成协商，Linux XFRM 处理业务包。密码库接入控制面后，数据面究竟走哪套实现，需要沿接口继续追踪。</p>
               <a class="feature-read" href={pathFor(`articles/${firstPost.id}/`)}>阅读全文 <span aria-hidden="true">↗</span><small>约 {firstPost.data.minutes} 分钟</small></a>
             </div>
-            {firstPost.id==='tcp-recv-message-boundary'&&<StreamEvidence/>}
-            {firstPost.id==='strongswan-child-sa-xfrm'&&<ChildSaPreview/>}
+            <ChildSaPreview/>
           </div>
-          <div class="featured-footnote"><Status state={firstPost.data.conclusion}/>{basis&&<a href={basisHref}>{basis.label} ↗</a>}</div>
-          {basis&&<p class="featured-boundary">{basis.boundary}</p>}
-        </article>}
-        {corePosts.length>0&&<section class="journal-entries" aria-labelledby="more-writing">
-          <div class="section-heading"><h2 id="more-writing">源码解读与技术思考</h2><a href={pathFor('journey/')}>技术框架图 <span aria-hidden="true">↗</span></a></div>
-          <p class="series-introduction">已收录 {publications.length} 份技术原稿。这里列出几个入口，完整系列见文章目录。</p>
-          {corePosts.map(post=><PostRow post={post} compact/>)}<a class="all-manuscripts" href={pathFor('articles/')}>按系列阅读全部 {posts.length} 篇文章 →</a>
-        </section>}
-        {supplements.length>0&&<section class="supplemental-reading" aria-labelledby="supplement-title"><div class="section-heading"><h2 id="supplement-title">实验与补充研究</h2><a href={pathFor('articles/')}>全部 {posts.length} 篇 ↗</a></div><ul>{supplements.map(post=><li><span>{post.data.kind}</span><a href={pathFor(`articles/${post.id}/`)}>{post.data.title} ↗</a></li>)}</ul></section>}
+          <div class="featured-footnote"><Status state="source"/><a href={pathFor('lab/ipsec-single-vm-evidence/')}>关联实验：XFRM 与 ESP 的对应关系 ↗</a></div>
+          <p class="featured-boundary">源码基线与运行版本分别标注。日志支持具体观察，不替代逐函数调用跟踪。</p>
+        </article>
+        <section class="journal-entries" aria-labelledby="more-writing">
+          <div class="section-heading"><h2 id="more-writing">把前后两段接起来</h2><a href={pathFor('journey/')}>技术框架图 ↗</a></div>
+          <p class="series-introduction">从配置创建状态，到协商结果进入内核，再到真实业务包。首页选这三篇，是因为它们能放在同一条路径上核对。</p>
+          {corePosts.map(post=><PostRow post={post} compact/>)}
+        </section>
+        <section class="home-lab" aria-labelledby="home-lab-title">
+          <div class="section-heading"><h2 id="home-lab-title">一次实际运行的记录</h2><a href={pathFor('lab/')}>实验台账 ↗</a></div>
+          <p class="lab-dateline"><span>运行于 <time datetime="2026-09-23">2026-09-23</time></span><span>作者已亲自操作 · 历史记录归档</span></p>
+          <h3><a href={pathFor('lab/ipsec-single-vm-evidence/')}>单虚拟机 IPsec 实验：协商、XFRM 与 ESP ↗</a></h3>
+          <p>单虚拟机、四个网络命名空间。把双向 SPI、XFRM 计数和真实业务流量对上，也留下 proposal 不匹配时的失败输出。</p>
+          <p class="lab-limit">原始记录暂不公开。抓包只覆盖首对 ESP，这个缺口在摘要中明确保留。</p>
+        </section>
+        <section class="archive-door" aria-labelledby="archive-door-title">
+          <div><h2 id="archive-door-title">完整资料库</h2><p>VPN 技术原稿、源码笔记与待审阅的补充研究。按系列、主题或函数名查找。</p></div><a href={pathFor('articles/')}>打开文章与原稿档案 →</a>
+          <details><summary>关于日期和稿件状态</summary><p>原稿留档、本站收录、后续修订分别记录。原稿、AI 辅助补充稿与真实实验分开标注；文档数量不表示研究已全部完成。</p></details>
+        </section>
       </div>
       <aside class="journal-aside">
+        <section class="current-research">
+          <h2>当前研究</h2><p class="research-focus">strongSwan / XFRM</p>
+          <p>先把配置、IKE 协商、内核 SA 与业务包的关系说清楚。已有单机隧道记录，下一步补完整抓包与运行版本证据。</p>
+          <a href={pathFor('journey/#ipsec')}>在系统栈里看这条路径 ↗</a>
+        </section>
         <section class="author-note">
-          <h2>关于作者</h2><p class="author-name" lang="en">congroo</p>
-          <p>一名从事密码网关研发的工程师。关注 Linux 内核、高性能网络与 IPsec / TLS。</p>
-          <p>顺着包的路径读源码，再把状态、密钥与测量结果对起来。这里也留着暂时没弄清的问题。</p>
-          <a href={pathFor('about/')}>关于我与这个博客 ↗</a>
+          <h2>关于这个人</h2><p>congroo，密码网关工程实践者。这里记录源码阅读、技术判断，以及判断被修正的依据。</p>
+          <a href={pathFor('about/')}>当前阶段与交流方向 ↗</a>
           <div class="author-links"><a href={site.github}>GitHub ↗</a><a href={pathFor('subscribe/')}>RSS ↗</a></div>
         </section>
-        <section class="topic-index"><h2>按主题阅读</h2><ul>{grouped.map(c=><li><a href={pathFor(`articles/?category=${c.key}`)}><span>{c.label}</span><span>{String(c.count).padStart(2,'0')}</span></a></li>)}</ul></section>
-        <section class="journey-margin"><h2>高性能安全通信系统栈</h2><p>协议控制面、密码接口、Linux 数据面、性能与高速路径。把文章放回它所属的技术层。</p><a href={pathFor('journey/')}>打开技术框架图 ↗</a></section>
-        {latestLab&&<section class="lab-margin"><h2>实验手记</h2><p class="margin-meta"><span>{latestLab.data.number}</span><time datetime={latestLab.data.updated.toISOString()}>{formatDate(latestLab.data.updated)}</time></p><h3><a href={pathFor(`lab/${latestLab.id}/`)}>{latestLab.data.title} ↗</a></h3><p class="open-question"><span>尚待验证</span>{latestLab.data.openQuestions[0]}</p></section>}
-        <section class="editorial-note"><h2>阅读说明</h2><p><span class="status-key verified-key">实验</span>标明执行者、环境与原始输出。</p><p><span class="status-key reference-key">资料</span>区分标准、源码分析与推测。</p><a href={pathFor('about/#editorial')}>内容与修订原则 ↗</a></section>
       </aside>
     </div>
   </div>

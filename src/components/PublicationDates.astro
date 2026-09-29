@@ -1,0 +1,12 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { publicationTimeline } from '../lib/publication';
+import { formatDate } from '../lib/site';
+interface Props { post: CollectionEntry<'posts'>; }
+const { post } = Astro.props;
+const timeline = publicationTimeline(post);
+---
+<div class="publication-dates" data-pagefind-ignore>
+  <p class="article-byline">congroo · {timeline.label} <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>{timeline.revised&&<> · 最后修订 <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time></>}</p>
+  {timeline.imported&&<p class="manuscript-date">{timeline.firstRecorded?<>原稿最早留档 <time datetime={timeline.firstRecorded}>{timeline.firstRecorded}</time><span>文档版本记录，非首次写作日期</span></>:<>原稿形成日期未核实；以上为本站收录日期。</>}</p>}
+</div>

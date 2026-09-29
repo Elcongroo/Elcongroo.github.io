@@ -4,18 +4,18 @@ import { getCollection } from 'astro:content';
 import { pathFor } from '../lib/paths';
 import { stack, crossSections, flows } from '../data/system-stack';
 import '../styles/stack.css';
+import { researchStatus } from '../data/research-status';
 const posts=await getCollection('posts',({data})=>!data.draft);
 const lookup=new Map(posts.map(p=>[p.id,p]));
 const preferred:Record<string,string[]>={ipsec:['strongswan-config-ike-sa','strongswan-packet-task','strongswan-key-derivation','strongswan-child-sa-xfrm','strongswan-ip-packet-esp'],tls:['openvpn-config-context','openvpn-control-tls','openvpn-data-channel-keys','tls-openvpn-data-channel','openvpn-receive-tun','openvpn-dco-keys'],linux:['linux-kernel-guide','linux-packet-path','tun-packet-path','netfilter-conntrack-nat','linux-xfrm-esp'],provider:['crypto-provider-kdf-map','openvpn-tongsuo-dual-cert','crypto-agility-evolution'],xfrm:['strongswan-child-sa-xfrm','strongswan-ip-packet-esp','linux-xfrm-esp']};
-const modules=stack.map(node=>({...node,posts:[...new Set([...(preferred[node.id]||node.articles),...posts.filter(p=>p.data.modules.includes(node.id)).sort((a,b)=>Number(a.data.editorial==='research')-Number(b.data.editorial==='research')||a.data.series.localeCompare(b.data.series)||a.data.seriesOrder-b.data.seriesOrder).map(p=>p.id)])].map(id=>lookup.get(id)!).filter(Boolean)}));
+const modules=stack.map(node=>({...node,status:researchStatus(node.id),posts:[...new Set([...(preferred[node.id]||node.articles),...posts.filter(p=>p.data.modules.includes(node.id)).sort((a,b)=>Number(a.data.editorial==='research')-Number(b.data.editorial==='research')||a.data.series.localeCompare(b.data.series)||a.data.seriesOrder-b.data.seriesOrder).map(p=>p.id)])].map(id=>lookup.get(id)!).filter(Boolean)}));
 const rows=[{label:'系统与策略',ids:['product','management','control']},{label:'协议控制',ids:['ipsec','tls']},{label:'密码与接口',ids:['crypto','provider']},{label:'内核与数据',ids:['xfrm','linux']},{label:'平台与测量',ids:['platform','performance']},{label:'高速路径与支线',ids:['fast-path','rdma']}];
-const originalCount=posts.filter(p=>p.data.editorial==='original').length;
 const related=(id:string)=>[...new Set(flows.flatMap(f=>f.steps.flatMap((s,i)=>s.module===id?[f.steps[i-1]?.module,f.steps[i+1]?.module]:[])).filter((s):s is string=>!!s&&s!==id))];
 ---
 <Base title="技术主线" description="沿 IKE、ESP、OpenVPN 与 PQC 的交接关系，阅读高性能安全通信系统栈中的技术原稿与研究笔记。">
  <div class="shell stack-page">
-  <header class="stack-header"><div><div class="page-kicker">SYSTEM STACK / 技术主线</div><h1>高性能安全通信系统栈</h1><p>从层次看职责，从路径看交接，从文章看细节。</p></div><a href={pathFor('articles/')}>全部 {posts.length} 篇文章 ↗</a></header>
-  <div class="stack-caption"><p><strong>{originalCount} 份技术原稿</strong>与 {posts.filter(p=>p.data.editorial==='research').length} 篇补充研究，放回各自的技术位置。</p><span>13 个模块 / 4 条路径 / 4 条横向线索</span></div>
+  <header class="stack-header"><div><div class="page-kicker">SYSTEM STACK / 技术主线</div><h1>高性能安全通信系统栈</h1><p>从层次看职责，从路径看交接，从文章看细节。</p></div><a href={pathFor('articles/')}>打开资料库 ↗</a></header>
+  <div class="stack-caption"><p>这是一张研究范围图。<strong>当前重点</strong>、已有笔记与后续方向分别标注；每篇文章另有自己的结论依据。</p><span>13 个模块 / 4 条路径 / 4 条横向线索</span></div>
   <section class="flow-explorer" aria-labelledby="flow-title">
    <header><h2 id="flow-title">先看一条实际关系</h2><span>箭头说明交接，不表示所有层都要逐包经过</span></header>
    <div class="flow-tabs" role="group" aria-label="选择运行路径">{flows.map((f,i)=><button type="button" data-flow-choice={f.id} aria-pressed={i===0?'true':'false'}>{f.name}</button>)}</div>
@@ -30,14 +30,14 @@ const related=(id:string)=>[...new Set(flows.flatMap(f=>f.steps.flatMap((s,i)=>s
   <div class="stack-layout" data-stack-map>
    <figure class="system-map" id="technical-map">
     <figcaption><span>完整分层 / 保留原框架 01—13 编号</span><span>点选模块，打开右侧文章索引 →</span></figcaption>
-    <div class="map-layers">{rows.map(row=><div class="map-group"><span class="map-group-label">{row.label}</span><div class:list={['map-row',`columns-${row.ids.length}`]}>{row.ids.map(id=>{const node=modules.find(n=>n.id===id)!;return <a href={`#${id}`} data-module={id} class:list={['map-module',node.group]}><span class="module-top"><span class="module-number">{node.no}</span><span class="module-count">{node.posts.length} 篇</span></span><strong>{node.title}</strong><span class="module-brief">{node.brief}</span><span class="module-selected">正在查看 ↗</span></a>;})}</div></div>)}</div>
+    <div class="map-layers">{rows.map(row=><div class="map-group"><span class="map-group-label">{row.label}</span><div class:list={['map-row',`columns-${row.ids.length}`]}>{row.ids.map(id=>{const node=modules.find(n=>n.id===id)!;return <a href={`#${id}`} data-module={id} class:list={['map-module',node.group]}><span class="module-top"><span class="module-number">{node.no}</span><span class="module-count">{node.posts.length} 篇</span></span><strong>{node.title}</strong><span class="module-brief">{node.brief}</span><span class:list={['module-maturity',node.status.kind]}>{node.status.label}</span><span class="module-selected">正在查看 ↗</span></a>;})}</div></div>)}</div>
     <div class="map-cross-links"><span>横向贯穿</span>{crossSections.map(c=><a href={`#cross-${c.id}`}>{c.title} ↘</a>)}</div>
    </figure>
    <aside class="stack-reader" aria-label="模块详情与文章">
     <div class="reader-label"><span data-reader-status aria-live="polite">从框架进入正文</span><a class="return-to-map" href="#technical-map">↑ 返回框架</a><span class="reader-arrow" aria-hidden="true">↙</span></div>
     {modules.map(node=><section id={node.id} class:list={['module-reading',node.group]} data-reading={node.id} tabindex="-1">
      <div class="reader-title"><span class="reader-big-number" aria-hidden="true">{node.no}</span><div><p class="reader-coordinate">{node.english}</p><h2>{node.title}</h2></div></div>
-     <p class="reader-summary">{node.brief}</p>
+     <p class="reader-summary">{node.brief}</p><p class="reader-maturity"><strong>{node.status.label}</strong>{node.status.note}</p>
      <div class="module-articles"><h3>{node.posts.length} 篇相关文章 <a href={pathFor(`articles/?module=${node.id}`)}>完整目录 ↗</a></h3><ol>{node.posts.slice(0,5).map(post=><li><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}<span aria-hidden="true">↗</span></a><small>{post.data.editorial==='research'?'补充研究 · 待审阅':post.data.kind} · 约 {post.data.minutes} 分钟</small></li>)}</ol>{node.posts.length>5&&<details class="more-module-posts"><summary>再看 {node.posts.length-5} 篇</summary><ol>{node.posts.slice(5).map(post=><li><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}<span aria-hidden="true">↗</span></a><small>{post.data.editorial==='research'?'补充研究 · 待审阅':post.data.kind}</small></li>)}</ol></details>}</div>
      {related(node.id).length>0&&<div class="module-neighbors"><h3>在上方路径中与这些模块交接</h3>{related(node.id).map(id=><a href={`#${id}`} data-module={id}>{modules.find(m=>m.id===id)?.title} ↗</a>)}</div>}
      <details class="module-scope"><summary>原框架中的技术范围</summary><dl>{node.scope.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details>

@@ -15,7 +15,7 @@ seriesOrder: 2
 difficulty: "进阶"
 prerequisites: ["按正文的概念解释、源码入口与关联文章补齐前置知识"]
 environment: ["原稿整理；本次发布未新增运行实验"]
-software: ["strongSwan 6.0.3；源码快照与本地适配边界见正文"]
+software: ["实操版本按原稿记载：strongSwan 6.0.4 / Linux 7.0.0 / Ubuntu 26.04.1；未附版本命令输出", "配套源码分析：strongSwan 6.0.3 / Linux v6.6"]
 conclusion: "public"
 realVerified: false
 verificationActor: "保留原稿的源码分析、资料判断与实验边界；未将文档迁移视为新增实测"

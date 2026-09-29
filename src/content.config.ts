@@ -47,6 +47,8 @@ const lab = defineCollection({
   schema: z.object({
     ...common,
     number: z.string(),
+    occurred: z.coerce.date().optional(),
+    evidenceAccess: z.enum(['public', 'private']).default('public'),
     purpose: z.string(),
     environment: z.array(z.string()),
     result: z.string(),
