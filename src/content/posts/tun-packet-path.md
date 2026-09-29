@@ -1,6 +1,8 @@
 ---
-title: 'TUN 接口到底把包交给了谁？'
-description: '从虚拟网卡到用户态程序，再到外层 Socket，理解经典用户态 VPN 的两段报文路径。'
+title: "Linux TUN 的报文路径：内核、用户态与外层 Socket"
+description: "沿经典用户态隧道的发送与接收路径，说明 TUN 文件描述符、路由、内层 IP 包与外层 Socket 之间的关系。"
+takeaway: "TUN 让用户态程序读写 IP 包，本身不负责加密。业务路由与隧道对端的可达路径需要分别检查。"
+basis: {"label": "依据：Linux 内核 TUN/TAP 文档", "href": "https://docs.kernel.org/networking/tuntap.html", "boundary": "限经典用户态隧道的概念路径；尚无独立实验记录，也不据此判断性能瓶颈。"}
 date: 2026-09-29
 updated: 2026-09-29
 series: 公开资料阅读
@@ -13,6 +15,8 @@ conclusion: public
 realVerified: false
 verificationActor: 未执行实验
 changes:
+  - date: 2026-09-29
+    note: 明确标题、摘要与首页要点，补充依据和结论边界；未新增实验结果。
   - date: 2026-09-29
     note: 初稿整理；本次补充文章范围与验证元数据。
 category: linux

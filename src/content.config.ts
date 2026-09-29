@@ -13,6 +13,8 @@ const posts = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/posts' }),
   schema: z.object({
     ...common,
+    takeaway: z.string().optional(),
+    basis: z.object({ label: z.string(), href: z.string(), boundary: z.string() }).optional(),
     category: z.enum(['vpn', 'linux', 'crypto', 'pqc', 'performance', 'engineering']),
     tags: z.array(z.string()),
     kind: z.string(),

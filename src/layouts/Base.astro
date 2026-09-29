@@ -37,7 +37,7 @@ const nav = [['首页',''],['文章','articles/'],['分类','topics/'],['实验'
   <body>
     <a class="skip-link" href="#main">跳到正文</a>
     <header class="site-header shell" data-pagefind-ignore>
-      <a class="brand" href={pathFor()} aria-label="congroo 首页"><span class="author-wordmark">congroo<span aria-hidden="true">/</span></span></a>
+      <a class="brand" href={pathFor()} aria-label="congroo 首页"><span class="author-wordmark">congroo</span></a>
       <nav class="header-navigation" aria-label="主导航">{nav.map(([label,url]) => <a href={pathFor(url)} aria-current={url === '' ? (pathname === pathFor() ? 'page' : undefined) : (pathname.startsWith(pathFor(url)) ? 'page' : undefined)}>{label}</a>)}</nav>
       <div class="header-tools">
         <a href={pathFor('articles/#search')} class="search-link" aria-label="搜索文章"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></svg><span>搜索</span></a>
@@ -46,9 +46,9 @@ const nav = [['首页',''],['文章','articles/'],['分类','topics/'],['实验'
       </div>
     </header>
     <main id="main"><slot /></main>
-    <footer class="publication-footer" data-pagefind-ignore>
-      <div class="shell footer-main"><div><a class="footer-signature" href={pathFor()}>{site.title}<span aria-hidden="true">.</span></a><p>文章、学习笔记与独立实验。<br/>具体的问题，慢慢写清楚。</p></div><div class="footer-directory"><div><span>阅读</span><a href={pathFor('articles/')}>文章归档</a><a href={pathFor('lab/')}>实验手记</a><a href={pathFor('topics/')}>按主题读</a></div><div><span>关于与订阅</span><a href={pathFor('about/')}>关于 congroo</a><a href={site.github}>GitHub ↗</a><a href={pathFor('subscribe/')}>RSS 订阅 ↗</a></div></div></div>
-      <div class="shell footer-colophon"><span>© {new Date().getFullYear()} {site.author}</span><a href={pathFor('about/#editorial')}>内容与修订原则</a><a href="#main">回到正文 ↑</a></div>
+    <footer class="site-footer shell" data-pagefind-ignore>
+      <span>© {new Date().getFullYear()} congroo · 技术札记</span>
+      <nav aria-label="页脚"><a href={site.github}>GitHub</a><a href={pathFor('subscribe/')}>RSS</a><a href={pathFor('about/#editorial')}>内容与修订原则</a></nav>
     </footer>
     <script>
       const button = document.querySelector<HTMLButtonElement>('#theme-toggle')!;

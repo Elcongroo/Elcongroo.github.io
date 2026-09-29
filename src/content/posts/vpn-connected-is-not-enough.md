@@ -1,6 +1,8 @@
 ---
-title: 'VPN 显示“已连接”，业务包就一定受到保护了吗？'
-description: '从 IKE、CHILD SA 到 Linux XFRM，分清连接状态、策略匹配与真实业务流量各自能证明什么。'
+title: "IPsec 数据面验证：从 SA 状态到业务流量"
+description: "以 strongSwan 与 Linux XFRM 的常见路径为例，区分 IKE SA、CHILD SA、策略选择器和业务流量，整理逐层验证的方法。"
+takeaway: "隧道状态不能单独证明业务流受到保护。应围绕同一条测试流，对照策略、SA 计数与内外侧抓包。"
+basis: {"label": "依据：RFC 7296", "href": "https://www.rfc-editor.org/rfc/rfc7296.html", "boundary": "公开资料阅读与验证方法整理；本文未提供对应环境的实测或抓包证据。"}
 date: 2026-09-29
 updated: 2026-09-29
 series: 公开资料阅读
@@ -13,6 +15,8 @@ conclusion: public
 realVerified: false
 verificationActor: 未执行实验
 changes:
+  - date: 2026-09-29
+    note: 明确标题、摘要与首页要点，补充依据和结论边界；未新增实验结果。
   - date: 2026-09-29
     note: 初稿整理；本次补充文章范围与验证元数据。
 category: vpn

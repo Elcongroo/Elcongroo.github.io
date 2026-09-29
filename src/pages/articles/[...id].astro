@@ -7,6 +7,8 @@ import { pathFor } from '../../lib/paths';
 export async function getStaticPaths(){return (await getCollection('posts',({data})=>!data.draft)).map(post=>({params:{id:post.id},props:{post}}));}
 interface Props { post: CollectionEntry<'posts'>; }
 const {post}=Astro.props;
+const basis=post.data.basis;
+const basisHref=basis&&(/^https?:/.test(basis.href)?basis.href:pathFor(basis.href));
 const {Content,headings}=await render(post);
 const all=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>a.data.date.valueOf()-b.data.date.valueOf() || a.data.seriesOrder-b.data.seriesOrder || a.id.localeCompare(b.id));
 const index=all.findIndex(p=>p.id===post.id);
@@ -16,7 +18,7 @@ const structured={ '@context':'https://schema.org','@type':'BlogPosting',headlin
 ---
 <Base title={post.data.title} description={post.data.description} article>
   <div class="reading-shell">
-    <header class="article-header"><div class="breadcrumb"><a href={pathFor('articles/')}>文章</a> / {categories[post.data.category].label}</div><div class="entry-meta"><span>{post.data.kind}</span><span>{post.data.difficulty}</span><span>约 {post.data.minutes} 分钟</span><Status state={post.data.conclusion} full/></div><h1 data-pagefind-meta="title">{post.data.title}</h1><p class="summary">{post.data.description}</p></header>
+    <header class="article-header"><div class="breadcrumb"><a href={pathFor('articles/')}>文章</a> / {categories[post.data.category].label}</div><div class="entry-meta"><span>{post.data.kind}</span><span>{post.data.difficulty}</span><span>约 {post.data.minutes} 分钟</span><Status state={post.data.conclusion} full/></div><h1 data-pagefind-meta="title">{post.data.title}</h1><p class="article-byline">congroo · 发布于 <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time> · 修订于 <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time></p><p class="summary"><strong>摘要：</strong>{post.data.description}</p><dl class="article-reading-guide">{post.data.takeaway&&<div><dt>要点</dt><dd>{post.data.takeaway}</dd></div>}{basis&&<div><dt>依据</dt><dd><a href={basisHref}>{basis.label}</a><span class="guide-boundary">{basis.boundary}</span></dd></div>}</dl></header>
     <details class="article-conditions"><summary>环境、版本与验证范围</summary><dl class="article-meta"><div><dt>发布 / 修订</dt><dd><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time> / <time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time></dd></div><div><dt>所属系列</dt><dd>{post.data.series} · {String(post.data.seriesOrder).padStart(2,'0')}</dd></div><div><dt>前置知识</dt><dd>{post.data.prerequisites.join('；')}</dd></div><div><dt>适用版本</dt><dd>{post.data.software.join('；')}</dd></div><div><dt>实验环境</dt><dd>{post.data.environment.join('；')}</dd></div><div><dt>验证与执行</dt><dd>{post.data.verificationActor}</dd></div><div><dt>代码仓库</dt><dd>{post.data.repository ? <a href={post.data.repository}>对应仓库</a> : '尚无独立公开仓库；有脚本时见文末原始材料。'}</dd></div></dl></details>
     <div class="article-layout">
       <article class="prose" data-pagefind-body>

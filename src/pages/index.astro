@@ -1,43 +1,26 @@
 ---
 import Base from '../layouts/Base.astro';
-import Search from '../components/Search.astro';
-import Status from '../components/Status.astro';
+import PostRow from '../components/PostRow.astro';
 import '../styles/home.css';
 import { getCollection } from 'astro:content';
 import { pathFor } from '../lib/paths';
-import { categories, formatDate, site } from '../lib/site';
-const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf()||Number(b.data.featured)-Number(a.data.featured));
-const labs=(await getCollection('lab',({data})=>!data.draft)).sort((a,b)=>b.data.date.valueOf()-a.data.date.valueOf());
-const featured=posts.find(p=>p.id==='tcp-recv-message-boundary');
-const others=posts.filter(p=>p.id!==featured?.id);
+import { categories, site } from '../lib/site';
+const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf()||Number(b.data.featured)-Number(a.data.featured)||a.data.seriesOrder-b.data.seriesOrder);
 const grouped=Object.entries(categories).map(([key,value])=>({key,...value,count:posts.filter(p=>p.data.category===key).length})).filter(c=>c.count>0);
-const tags=[...new Set(posts.flatMap(p=>p.data.tags))];
-const years=[...new Set(posts.map(p=>p.data.date.getUTCFullYear()))].sort((a,b)=>b-a);
-const recent=labs[0];
+const labs=await getCollection('lab',({data})=>!data.draft);
 ---
 <Base>
-  <div class="shell journal-home">
-    <header class="journal-intro"><div><p class="eyebrow">CONGROO’S BLOG</p><h1>我的文章与笔记</h1><p>技术、学习，以及做工程时的思考。遇到具体的问题，就在这里留下一份记录。</p></div><a class="intro-index" href="#writing">{posts.length} 篇文章 <span> / </span> {labs.length} 条实验<br/><span>浏览目录 ↓</span></a></header>
-    <section class="featured-spread" aria-label="精选与近期文章">
-      {featured&&<article class="featured-story">
-        <div class="feature-topline"><span>精选文章</span><span>LINUX NETWORKING · {formatDate(featured.data.updated)}</span></div>
-        <div class="feature-body"><div class="feature-copy"><h2><a href={pathFor(`articles/${featured.id}/`)}>{featured.data.title}</a></h2><p>请求读取 16 字节，第一次却只拿到 8 字节。用一次受控实验，看看怎样收齐消息，以及何时应该报错。</p><a class="feature-read" href={pathFor(`articles/${featured.id}/`)}>阅读这篇文章 <span aria-hidden="true">↗</span></a></div>
-          <figure class="byte-study" aria-label="受控实验示意：16 字节正文分两次各读取 8 字节。这是本次观察，不是 TCP 的固定行为。"><div class="byte-fraction" aria-hidden="true">08<span>/16</span></div><div class="byte-label">首次正文读取 / 总长度</div><div class="byte-strip" aria-hidden="true">{Array.from({length:16},(_,i)=><span class:list={{received:i<8}}></span>)}</div><div class="byte-caption"><span>第一次：8 字节</span><span>继续读取：8 字节</span></div><figcaption>本次 loopback 实验的观察<br/>读取边界不等于消息边界</figcaption></figure>
-        </div><div class="feature-bottom"><span>Codex 执行 · 作者复现待完成</span><span>{featured.data.minutes} 分钟阅读</span></div>
-      </article>}
-      <aside class="recent-reading" aria-labelledby="recent-reading-title"><header><h2 id="recent-reading-title">也可以从这里读起</h2><span>READ NEXT</span></header>{others.slice(0,3).map((post,i)=><article><div class="reading-number">{String(i+1).padStart(2,'0')}</div><div><p class="reading-category">{categories[post.data.category].label} · {post.data.kind}</p><h3><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}</a></h3><span class="reading-duration">约 {post.data.minutes} 分钟 <span aria-hidden="true">↗</span></span></div></article>)}</aside>
-    </section>
-    <section class="writing-section" id="writing" aria-labelledby="writing-title">
-      <header class="journal-section-heading"><div><h2 id="writing-title">文章目录 <span>Writing</span></h2><p>读过的资料、做过的实验，和目前的理解。</p></div><a href={pathFor('articles/')}>全部文章 ↗</a></header>
-      <div class="writing-layout"><aside class="author-column">
-        <section class="author-introduction"><p class="eyebrow">THE PERSON BEHIND THE NOTES</p><h2>你好，我是 <em>congroo.</em></h2><p>目前在做密码网关研发，关注 VPN、密码库和 Linux 网络。把遇到的问题写下来，也给以后的自己留一份索引。</p><a class="author-more" href={pathFor('about/')}>更多关于我 ↗</a><div class="author-links"><a href={site.github}>GitHub</a><a href={pathFor('subscribe/')}>RSS 订阅</a></div></section>
-        <section class="author-topics"><h3>文章分类</h3><ul>{grouped.map(c=><li><a href={pathFor(`articles/?category=${c.key}`)}>{c.label}<span>{c.count}</span></a></li>)}</ul></section>
-        <section class="author-tags"><h3>常见关键词</h3><div>{tags.map(tag=><a href={pathFor(`articles/?tag=${encodeURIComponent(tag)}`)}>{tag}</a>)}</div></section>
-      </aside><div class="writing-index"><Search/><div class="index-legend" aria-hidden="true"><span>目录</span><span>文章 / 结论状态</span><span>更新 / 阅读</span></div>
-        <ol class="writing-list">{posts.map((post,i)=><li><span class="index-number" aria-hidden="true">{String(i+1).padStart(2,'0')}</span><article><div class="index-category">{categories[post.data.category].label} <span> / {post.data.kind}</span></div><h3><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}</a></h3><p>{post.data.description}</p><Status state={post.data.conclusion}/></article><div class="index-date"><time datetime={post.data.updated.toISOString()}>{formatDate(post.data.updated)}</time><span>约 {post.data.minutes} 分钟</span></div></li>)}</ol>
-        <div class="index-end"><span>共 {posts.length} 篇 · 笔记持续修订</span><div>{years.map(year=><a href={pathFor(`articles/#year-${year}`)}>{year} 年归档 ↗</a>)}</div></div>
-      </div></div>
-    </section>
-    {recent&&<section class="fieldnotes" aria-labelledby="fieldnotes-title"><header class="journal-section-heading"><div><h2 id="fieldnotes-title">实验手记 <span>Field notes</span></h2><p>把过程留下来，结论才有落点。</p></div><a href={pathFor('lab/')}>实验记录 ↗</a></header><div class="fieldnote-entry"><div class="fieldnote-id"><span>{recent.data.number}</span><time datetime={recent.data.date.toISOString()}>{formatDate(recent.data.date)}</time></div><div><h3><a href={pathFor(`lab/${recent.id}/`)}>{recent.data.title}</a></h3><p>{recent.data.result}</p><p class="fieldnote-boundary">{recent.data.performedBy}。环境：loopback / Python。</p></div><div class="fieldnote-links"><a href={pathFor(`lab/${recent.id}/`)}>阅读记录 ↗</a><a href={pathFor('downloads/tcp-stream-lab/tcp_stream_lab.py')}>查看代码 ↗</a><a href={pathFor('downloads/tcp-stream-lab/evidence/run-03.json')}>原始结果 ↗</a></div></div></section>}
+  <div class="shell research-home">
+    <header class="research-intro"><h1>技术文章</h1><p>Linux 网络、VPN 协议与密码工程。以机制、代码和可核对的记录展开。</p></header>
+    <div class="research-layout">
+      <section class="research-articles" aria-label="文章摘要"><div class="list-caption"><span>全部 {posts.length} 篇 · 按更新时间排列</span><a href={pathFor('articles/#search')}>检索正文 →</a></div>{posts.map(post=><PostRow post={post} headingLevel="h2"/>)}</section>
+      <aside class="research-sidebar">
+        <section><h2>关于作者</h2><p>我是 congroo，从事密码网关研发。这里整理学习中的问题、公开资料阅读和独立实验。</p><a href={pathFor('about/')}>关于与写作说明 →</a></section>
+        <section><h2>文章主题</h2><ul>{grouped.map(c=><li><a href={pathFor(`articles/?category=${c.key}`)}><span>{c.label}</span><span>{c.count}</span></a></li>)}</ul></section>
+        <section><h2>如何判断结论</h2><p>实验文章附执行者、环境与原始输出；资料阅读说明来源及尚未验证的部分。</p><a href={pathFor('about/#editorial')}>内容与修订原则 →</a></section>
+        <section><h2>实验记录</h2>{labs.map(lab=><p><a href={pathFor(`lab/${lab.id}/`)}>{lab.data.number} · {lab.data.title}</a></p>)}</section>
+        <section class="research-links"><a href={site.github}>GitHub ↗</a><a href={pathFor('subscribe/')}>RSS 订阅</a></section>
+      </aside>
+    </div>
   </div>
 </Base>

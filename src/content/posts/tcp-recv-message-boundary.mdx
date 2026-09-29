@@ -1,6 +1,8 @@
 ---
-title: 'recv(16) 返回 8 字节之后，剩下的消息怎么办？'
-description: '一个受控的 loopback 实验：按长度收齐应用消息，并在提前 EOF 时拒绝残缺数据。'
+title: "TCP 字节流的消息边界：短读与提前 EOF"
+description: "使用四字节长度头定义消息边界，在受控回环环境中复现短读与提前 EOF；给出手工步骤、接收代码及原始运行记录。"
+takeaway: "recv(n) 只给出单次读取上限。应用需按协议收齐字节，并在消息未完整时将 EOF 作为失败处理。"
+basis: {"label": "原始记录：2 个用例 / 15 项断言", "href": "downloads/tcp-stream-lab/evidence/run-03.json", "boundary": "Codex 编写并执行，作者本人复现待完成；未覆盖长度头截断、超大长度等情况。"}
 date: 2026-09-29
 updated: 2026-09-29
 category: linux
@@ -25,6 +27,8 @@ evidence:
   - label: SHA-256 清单
     path: downloads/tcp-stream-lab/SHA256SUMS
 changes:
+  - date: 2026-09-29
+    note: 明确标题、摘要与首页要点，补充依据和结论边界；未新增实验结果。
   - date: 2026-09-29
     note: 完成正常读取与提前 EOF 两个自动用例；保留原始输出和脚本哈希。手工复现尚未验收。
 ---

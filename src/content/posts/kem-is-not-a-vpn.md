@@ -1,6 +1,8 @@
 ---
-title: '支持 ML-KEM，距离一条后量子 VPN 还有多远？'
-description: '先分清密钥建立、身份认证和数据加密，再讨论算法怎样进入真实的协议与工程实现。'
+title: "ML-KEM 接入 VPN：密钥交换之外的工程边界"
+description: "依据 FIPS 203 与 IKEv2 多重密钥交换扩展，拆分密钥建立、身份认证和数据保护，列出算法接入协议时需要回答的问题。"
+takeaway: "完成 ML-KEM 封装与解封装只覆盖算法层；协议协商、认证绑定、密钥派生及失败处理仍需单独验证。"
+basis: {"label": "依据：FIPS 203", "href": "https://csrc.nist.gov/pubs/fips/203/final", "boundary": "标准阅读与工程检查建议；不构成某个 VPN 实现的后量子安全或互通结论。"}
 date: 2026-09-29
 updated: 2026-09-29
 series: 公开资料阅读
@@ -13,6 +15,8 @@ conclusion: public
 realVerified: false
 verificationActor: 未执行实验
 changes:
+  - date: 2026-09-29
+    note: 明确标题、摘要与首页要点，补充依据和结论边界；未新增实验结果。
   - date: 2026-09-29
     note: 初稿整理；本次补充文章范围与验证元数据。
 category: pqc
