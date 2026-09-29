@@ -1,10 +1,68 @@
 [
   {
+    "slug": "gmt0022-strongswan-gap",
+    "document": "GM-T 0022-2023 与 strongSwan 6.0.3 上游差距分析.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "34271d078f27ac7570120f114c69857c1cd1a595602d53f3e560133dbd0ce242",
+    "bodySha256": "37d4aa7580ec2304001df5f0c9b178ca53497a7704dae8d64b6b16132f28c745",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "ipsec-protocols",
+    "document": "IPsec 协议体系解读与流程图.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "14e530e0635c647fbdab033ef767ba543664be7eb202aeaa924892a29e8461be",
+    "bodySha256": "f51ae02d7a0825ed373ad3caa52f1e6cd183698e653b323eebca91b4dd18c0fa",
+    "omissions": []
+  },
+  {
+    "slug": "linux-socket-tcp-udp",
+    "document": "Linux Socket、TCP与UDP工程基础.md",
+    "sourceCommit": "32d9b03c62ed7a611995849550d4fe82fb1393fe",
+    "sourceSha256": "c472abc3d21bb87d51402f8681cce63b5b70785099cc7f887f120b9db7964321",
+    "bodySha256": "7af561f54522d268c4238d76e6550652b4968f28e227cbf635236f0a9178f0fc",
+    "omissions": []
+  },
+  {
+    "slug": "linux-xfrm-esp",
+    "document": "Linux XFRM与IPsec ESP内核数据面.md",
+    "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
+    "sourceSha256": "86bbd297770eb58016ac407dbef47a5d2f9282b3b0618e979ada6f6a33cb817d",
+    "bodySha256": "2ac504bd19671387256bd5814d5d790bee2a56a8e52e604028d592ccd0e8e3e4",
+    "omissions": []
+  },
+  {
+    "slug": "linux-kernel-guide",
+    "document": "Linux内核专题导览：从系统调用到VPN数据面.md",
+    "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
+    "sourceSha256": "4bc4c87a5e90aca74d5380e4a4eae0c94415b8f53fd34c434cbf680500995a00",
+    "bodySha256": "fb9024703e361ec81fd921ab0e5442462d2973ae7deb84ea0775715996e622d8",
+    "omissions": []
+  },
+  {
+    "slug": "linux-kernel-basics",
+    "document": "Linux内核入门：它是什么、由哪些部分组成.md",
+    "sourceCommit": "5bdc41162f4060aa940b6d53c1ee82c14f633407",
+    "sourceSha256": "d2553cc9f7d414f4ddbcf3a98a5cac7875450f53e2dc5d105ba29ea636fba163",
+    "bodySha256": "eab95afc409132b7300f1fd7eca74763157a0cd42f86d3f1f3cbaf23c8babf80",
+    "omissions": []
+  },
+  {
     "slug": "linux-packet-path",
     "document": "Linux内核收发包路径：NAPI、sk_buff、路由与Socket.md",
     "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
     "sourceSha256": "2b1799d08ff61f19cad2c23469b9f702892c8fd97243f7770ffed940045bb843",
     "bodySha256": "d7c22cc0893d66cc2b21a98b895f79bbf9a7dcd4b89a3d589c81e735d3611501",
+    "omissions": []
+  },
+  {
+    "slug": "vpn-performance-profile",
+    "document": "Linux网络性能与排障：队列、软中断、观测与高速路径.md",
+    "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
+    "sourceSha256": "1db7a0a36edd5ca2d15924b396e067c3533cea614d57c0d5a153e573bf040449",
+    "bodySha256": "b782af797a16c6498f128f9238707efce7a94717aa891c95359f7b51725f2860",
     "omissions": []
   },
   {
@@ -16,19 +74,75 @@
     "omissions": []
   },
   {
-    "slug": "strongswan-key-derivation",
-    "document": "strongSwan 五链源码精读 03 Proposal与KE到密钥.md",
-    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
-    "sourceSha256": "2a35467b13b1bc6ed9b71e9280db4f6889aaa8fb77238b831a386aa37529a726",
-    "bodySha256": "9d7683b297fffad212bcc3893d421f06c86c14f317da95fbb73c6f6a7f82a0d4",
+    "slug": "netfilter-conntrack-nat",
+    "document": "Netfilter、Conntrack、NAT与安全网关转发.md",
+    "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
+    "sourceSha256": "08fa0d485bcdabad5070045d66e2c12ebff6f936b4c02f0ec6e46c224de25a95",
+    "bodySha256": "680106f177b45ca7343ee2ec369015f044bc0baa17a246f1c47b41bbfdc0f84c",
     "omissions": []
   },
   {
-    "slug": "strongswan-child-sa-xfrm",
-    "document": "strongSwan 五链源码精读 04 CHILD_SA到XFRM.md",
+    "slug": "openvpn-architecture",
+    "document": "OpenVPN 2.7.4 总体框架与关键调用流程.md",
+    "sourceCommit": "fe6edf00148d0067407ee718c185ec183afc5fee",
+    "sourceSha256": "40c2596a92b62101da494a51485b47d2657e11fe5716af5e40b01bb5087b1e07",
+    "bodySha256": "6d1ed42094d49fc869de2b8df9352144c54ed801ce521dc4096addb199591021",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-tls-key-state",
+    "document": "OpenVPN TLS控制通道与Key State生命周期源码精读.md",
     "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
-    "sourceSha256": "5a70a5fce12ae63cad02077ac4dc8721e13aaea4e951530d0fe429e93e7a0ecd",
-    "bodySha256": "1667f146a75c9c460ca120bda34558776e46a9eafd310568afe83e32b5c08c52",
+    "sourceSha256": "e012dab1d50d509b753a4666c1d49b92a996b8a0ab5d7e84c5aa1c3d1d0dbacc",
+    "bodySha256": "58d8c7ad9480da2cb71c1ac37014d3c4501d31fdd5f48ee514524c0f4896f6ff",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-tongsuo-dual-cert",
+    "document": "OpenVPN Tongsuo 双证书与密钥生命周期附录.md",
+    "sourceCommit": "fe6edf00148d0067407ee718c185ec183afc5fee",
+    "sourceSha256": "a8dc8c58f413b405cd8fbbcd642bad63c695578f478807e57ae82b3873e27874",
+    "bodySha256": "d89c1481e97db46eef1ce9df55b45f897a23e6e130fba812da7caf6f68bc113c",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-guomi-extension",
+    "document": "OpenVPN 上游源码研究与国密改造点定位.md",
+    "sourceCommit": "fe6edf00148d0067407ee718c185ec183afc5fee",
+    "sourceSha256": "f3a0b5862ce815fa352d5a948ae6bedd783f6a9d7455390130c3b40374e83471",
+    "bodySha256": "eb0df7fda5ac2af61b9c7940414dff3538678a3710383f71346fd82d84eda440",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-layer-map",
+    "document": "OpenVPN 从系统到函数：TLS、Key State 与双通道分层定位图.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "2160e5554004c027303c2b4ba6bf489afe2f004e15850630072f4f049ebe6819",
+    "bodySha256": "d3071482225064c7af7d29b6fe359113a8c66513bdf8dbde6b793aad84db2b2d",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-flow-map",
+    "document": "OpenVPN 全链路数据流与模块协作图解.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "fee67d1aa8f1b16ac296b251383f27df44d283ddf2c6c86b7cfee214dd93e6d0",
+    "bodySha256": "71f3ba2bc706893a7d5366b6293f502bff468a881d91f4d98af7d5fe296a670e",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-config-context",
+    "document": "OpenVPN 六链源码精读 01 配置到运行上下文.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "3762698f8a53bb647a6dcede63d23b040f15fee5134f5898cbf163a2f7a75f5c",
+    "bodySha256": "e4d53f21c8c5365a6fca764fea9fc88e9582b9d3a042a92b11702c7e02aa4d20",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-control-tls",
+    "document": "OpenVPN 六链源码精读 02 控制报文到TLS状态机.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "46f5478f604ba0ad90406dcd4011f3e9ea0ccb32d65a70d94789ae5a66636a97",
+    "bodySha256": "b282245dd20ea6c0dd3198c12fa8938fd544e903206cb29354ed5aefda6e6ac9",
     "omissions": []
   },
   {
@@ -48,13 +162,384 @@
     "omissions": []
   },
   {
-    "slug": "vpn-performance-profile",
-    "document": "Linux网络性能与排障：队列、软中断、观测与高速路径.md",
-    "sourceCommit": "4c340fbb802dfdfba1ed7fdc65aa6286cd3fd95f",
-    "sourceSha256": "1db7a0a36edd5ca2d15924b396e067c3533cea614d57c0d5a153e573bf040449",
-    "bodySha256": "a86950e8da38461703a1cd459bf214348bcbb7d6d64c1bf4216e0f6e38772b7c",
+    "slug": "openvpn-receive-tun",
+    "document": "OpenVPN 六链源码精读 05 外层报文到TUN明文.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "0f270980d783576bf7f3782419209ac6d84fbcd041e2dbcb1755b966e1ffe614",
+    "bodySha256": "95fd69e1d8d57b83c5a0e1cdf9a4245560f03593cc339a9bf1017bc2c03f5345",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-dco-keys",
+    "document": "OpenVPN 六链源码精读 06 数据密钥到DCO.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "4eebbab814bcf001642997635e1af47ab267041f579b075544f5b0c718ff94a7",
+    "bodySha256": "bf8ff5f188ff2d082b5466b9b8a5e57a99a1b7c4db319ec0f9fb9a21b991817f",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-packet-rekey-dco",
+    "document": "OpenVPN 数据通道包格式、密钥轮换与DCO源码精读附录.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "7a6cd7e30b274de00d01f1c53b1d505b7dadb0dea0fe8d67226550d66b85b6e7",
+    "bodySha256": "e9b792d4730295c95b0875fef83b96d6ae73fd53645857fa3bc5bbaabd221638",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-source-index",
+    "document": "OpenVPN 源码导览.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "4447878112dab0a34b5ae0858587d980c187dfa6d9e0cdf5be4d12abfd2244c6",
+    "bodySha256": "0e27b5083276ca987f16cebde058c8464231561091b0522e4297afd3015a5be6",
+    "omissions": []
+  },
+  {
+    "slug": "openvpn-reading-method",
+    "document": "OpenVPN 源码阅读实战方法：从配置与事件循环到双通道数据流.md",
+    "sourceCommit": "fe6edf00148d0067407ee718c185ec183afc5fee",
+    "sourceSha256": "5157d48d4e68d737e1f3bc1e21fc17496aad358616d97ea3a764be899f2f187b",
+    "bodySha256": "fca01cf67de37e2c8f664ae54adf65517cb70287b19da7d872141af6af305145",
     "omissions": [
-      "第 11 节配套快照工具（未随本次选刊发布）"
+      "机构称谓与个人本机路径已泛化；技术推导保留"
     ]
+  },
+  {
+    "slug": "openvpn-design-model",
+    "document": "OpenVPN 设计者视角：进程模型、双通道架构与目录职责.md",
+    "sourceCommit": "fe6edf00148d0067407ee718c185ec183afc5fee",
+    "sourceSha256": "66eaff2a4c29f70cd28aac93c6f046cdad2ea69769443a79ccc76fac52d770ae",
+    "bodySha256": "570bff204a8b3f939714f752b539ad20d3a1a3cfee98c2fa95cce288e8204547",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "tls-tlcp-protocols",
+    "document": "TLS、TLCP 协议解读与流程图.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "281c3bf8f2c706b4df2289d35b32984c421a031e65b99733c0d6332fa5776b78",
+    "bodySha256": "890048ab532bf4883e884c20d0e478f05499dbdc288e2c5da8ab626eafeba5b3",
+    "omissions": []
+  },
+  {
+    "slug": "vpn-benchmark-method",
+    "document": "VPN性能基准环境与性能画像方法.md",
+    "sourceCommit": "83c3e0609007c2540131ad08925bc2f3d8e325d8",
+    "sourceSha256": "253a7da4930223e2323c4040c7a1ffc4536c517d0f911de0c19cc7f45de3112c",
+    "bodySha256": "852dbce69891f5ee350751ffabca3f73e73976fa7ffbb0e907d5d077d2317de7",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-architecture",
+    "document": "strongSwan 6.0.3 总体框架与关键调用流程.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "cb8eb4b93836bbb7235552d240b46689d880769873f14addb7a101847a9a59dc",
+    "bodySha256": "f87b8cd60a277b5a7a5192b9c0b034074e4af1cdb282581aa42697200ac223f5",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "strongswan-ikev1-task-manager",
+    "document": "strongSwan IKEv1 Task Manager 源码精读.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "1854baaaaf40b8595cb8228f76c2888ca7271dbe31c8b19a3c4c5e258b306057",
+    "bodySha256": "0eb5968f559af7df3e201929c755bf7ba132bcc4d77e4f0d53ce39115a192d33",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "strongswan-ikev2-task-manager",
+    "document": "strongSwan IKEv2 Task Manager 源码精读.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "60496507a592fd2978614224a186c38aaefe8cc5ef93573358f060968826cf84",
+    "bodySha256": "8f393886cdcddabf4fb2ae1546686e57235625a48b2850356187841701cba8a3",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "strongswan-ikev2-key-lifecycle",
+    "document": "strongSwan IKEv2 状态机与密钥生命周期源码精读.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "8d444409989bbfc04119d541d6d93b452b9a15b8ca9f857ce60fcc86b73db070",
+    "bodySha256": "0122f91510cee11cc26a181dfc3a9822c14e93e138fb5dfb9d39b98634195225",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "ikev2-reference-lab",
+    "document": "strongSwan IKEv2标准实验台与证据判读.md",
+    "sourceCommit": "83c3e0609007c2540131ad08925bc2f3d8e325d8",
+    "sourceSha256": "6a23b7ce294fa7cf0b15e4ce99111f7d32501f6af87049123ae4daffd4792fbd",
+    "bodySha256": "068545ebbba8eeef9dd7c1348513f3a9533d1d00660d9078bfcb1838368f416e",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "pqc-ike-reference",
+    "document": "strongSwan PQC-IKE参考原型与综合网关接入方案.md",
+    "sourceCommit": "c9076bbe64d4657f968ef3d0f228af309cbcc44b",
+    "sourceSha256": "72c11f9acb27bc1fccc41f9a17cd4464729c267a66ab8c7c5323b53295881a5b",
+    "bodySha256": "735b81c64c4574f5f5ea161f285dae673f1291e77fb72cc51be6eea90354b348",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "strongswan-proposal-xfrm",
+    "document": "strongSwan Proposal 到 XFRM 源码精读附录.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "7526005d49522a388000bcf8279368ba5bf63aa1577708225bb7c29e9bb2eadd",
+    "bodySha256": "28b7136032d8038baf45faac554ddb85f1b193e232be469a9999d6261ff724a2",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-guomi-extension",
+    "document": "strongSwan 上游源码研究与国密改造点定位.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "62cbee17455599bbf1160eb3149884df7915a95d94cf610fc7acbaf9296cc8c4",
+    "bodySha256": "2d987fc740eca7a1cb773838f189cd2b7392cf12b52e02f4c466c3ab7d286b87",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-config-ike-sa",
+    "document": "strongSwan 五链源码精读 01 配置到 IKE_SA.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "8ee0642ee252e8332e39bbcee0f6ed959651424a79d97e35f9a37fb28987abe4",
+    "bodySha256": "02bf23a0ff55d730a7d1e8a5a0bb92568832ac46bb3c1b3fe594165b276a68a3",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "strongswan-packet-task",
+    "document": "strongSwan 五链源码精读 02 IKE报文到协议任务.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "de212434fedd56cb32e5aa68429864536104b48d25db3069b2862d5dcf055ac1",
+    "bodySha256": "3b4f19fe9e6f8e19fb48f118670e1b1758915e299ef62ba132ad73f5f1b3b0b3",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-key-derivation",
+    "document": "strongSwan 五链源码精读 03 Proposal与KE到密钥.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "2a35467b13b1bc6ed9b71e9280db4f6889aaa8fb77238b831a386aa37529a726",
+    "bodySha256": "9d7683b297fffad212bcc3893d421f06c86c14f317da95fbb73c6f6a7f82a0d4",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-child-sa-xfrm",
+    "document": "strongSwan 五链源码精读 04 CHILD_SA到XFRM.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "5a70a5fce12ae63cad02077ac4dc8721e13aaea4e951530d0fe429e93e7a0ecd",
+    "bodySha256": "1667f146a75c9c460ca120bda34558776e46a9eafd310568afe83e32b5c08c52",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-ip-packet-esp",
+    "document": "strongSwan 五链源码精读 05 业务IP包到ESP.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "970a5a2f6085c109227ce8ad3c85285e2a428cb28f4fe40fd7b028cc37762f4b",
+    "bodySha256": "062d919392f54d32b7607795fedcfed2f74c27fa00c2449d314cbb979d9b24ba",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-layer-map",
+    "document": "strongSwan 从系统到函数：Task Manager 分层定位图.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "5c5e6825c0c7d0639d7a387ab6a365cf76d35c4e0488bd02cd8fcdea7cdbf29e",
+    "bodySha256": "d950a7d6f3da59ea4dee849cef257983d2b14d8bb56aff10251fb35ab5c251c2",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-flow-map",
+    "document": "strongSwan 全链路数据流与模块协作图解.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "ee77f03e3dc40c073e338b6ad69f919992feafe7f5a7323b586d8346dac695cf",
+    "bodySha256": "057d57f7f78117be447f4c29a8880b033b50cb2d89fb7b09e2032c01435fc3ba",
+    "omissions": []
+  },
+  {
+    "slug": "ikev2-single-vm-lab",
+    "document": "strongSwan 单虚拟机 IKEv2 IPsec 配置与验证实操.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "9210361bbdc576333fb61eac63874504f7f953fbee3618505281d9991e8e6416",
+    "bodySha256": "6ccc42cf3187525af8e17c7dc913a9e6e467a90edc43aa8b7ae75cf0cd852396",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "strongswan-study-route",
+    "document": "strongSwan 源码学习方法与实战路线.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "d6e7bc60a7c70f44c70479982ebe9dff36659039a7d420e78616b65c4149e161",
+    "bodySha256": "88836a860ddb1f317b9012e904e753e11fc5441282882c3b3c174e525c4b08f4",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "strongswan-source-index",
+    "document": "strongSwan 源码导览.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "28d8059bfeb95e9e6172ba369543436152d1ae2a8582e4b64f29ca8b9c901997",
+    "bodySha256": "04262222d11a64ea80328c7f528ae29a37a2d8c6f23f90cec8aeeeff4f11d507",
+    "omissions": []
+  },
+  {
+    "slug": "strongswan-reading-method",
+    "document": "strongSwan 源码阅读实战方法：从陌生C文件到完整执行链.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "329d6c613aff703a07d1fdb5f56c761c7562062408ee915531b42b9d1aad429d",
+    "bodySha256": "377f9f1ceb480f8ff0b1d1e2cb980e3d5ea33e30015ef05b307ddfc51dcb913a",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "strongswan-design-model",
+    "document": "strongSwan 设计者视角：对象模型、扩展机制与目录职责.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "bb15e2c592bc98278a08e6be4a40d094f17788bb05249b51ab5d2994dea8e713",
+    "bodySha256": "1e821ec3e80ad0b4b2bfbfb59c50d6e4b0f42a3fa2bf2e3654fb4b0a99d3b1ff",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "network-programming-vpn",
+    "document": "从网络编程到VPN网关：TUN、事件循环与源码映射.md",
+    "sourceCommit": "32d9b03c62ed7a611995849550d4fe82fb1393fe",
+    "sourceSha256": "a30b744d0e4827d399991635f1ff854ff8c469a020e063cf47651709aa390b0a",
+    "bodySha256": "64c79548326d14b59ba02bd0e2527a3e4114501ea31d37aa7afbed08b7ece592",
+    "omissions": []
+  },
+  {
+    "slug": "pqc-gateway-fundamentals",
+    "document": "后量子密码基础、网关接入与密码敏捷.md",
+    "sourceCommit": "0bc9b30d22b90c6380d693c04778290936e03342",
+    "sourceSha256": "6a088a48a79b427e2df60bf1465f9ccf3571002a6a0c6a7c2a4ae69853c9d2ac",
+    "bodySha256": "fb02b2c3e4cd89fa340b3e4e61d7fb23eddbc98babd11bed33430378f642e037",
+    "omissions": []
+  },
+  {
+    "slug": "gateway-module-boundaries",
+    "document": "后量子综合安全网关目标架构与模块边界.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "1faf5d84bfec38968c1b3c439fc60ce5825c3a9cc7d1db58153b12eff1196564",
+    "bodySha256": "cc1c526e0bc843ae18e94f3912810f228db69a25e19be63de8363b7826ca02e1",
+    "omissions": [
+      "第 2 节内部背景或非技术规划",
+      "第 12 节内部背景或非技术规划",
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "guomi-mapping-matrix",
+    "document": "国密改造映射矩阵.md",
+    "sourceCommit": "3ac30e59cff8c1b17038af92215012d8eafc24cf",
+    "sourceSha256": "1aad1b3f1653e6725584b2ca57b1c2faeefae411ae63a0541a936a44f2d14add",
+    "bodySha256": "3eb5340f3c68ea84ca73b7be21969f0e08ffce7bd2029e5c55b47470ec5112e0",
+    "omissions": []
+  },
+  {
+    "slug": "gateway-assessment",
+    "document": "安全网关升级空间评估清单.md",
+    "sourceCommit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7",
+    "sourceSha256": "7f934d81ce973feb7f71dc77afd24d49184cff2c154685943907f9b2d0fdf386",
+    "bodySha256": "c037d197cf27984e1de1c749837e406985a9351b49cd00f77840d4f09ceb38cf",
+    "omissions": []
+  },
+  {
+    "slug": "crypto-agility-evolution",
+    "document": "安全网关密码敏捷、密码卡与PQC演进路线.md",
+    "sourceCommit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7",
+    "sourceSha256": "f3e192f3764066e05940612fb7efd8e3124a39c7fdd28f728767693633bd8c92",
+    "bodySha256": "955eb67720ce9d391e945c10a7f73ae09cf8660e2049903adda918c220148a32",
+    "omissions": []
+  },
+  {
+    "slug": "gateway-platform-evolution",
+    "document": "安全网关平台能力演进路线.md",
+    "sourceCommit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7",
+    "sourceSha256": "df282d34537aa974baef36c479a86a22ca4effe2f89552664c6d66dc7cf3ac21",
+    "bodySha256": "c4f628a11d230d4e961d2a3248bcab853911ba98d897b9cc8f5c95e03ac90d49",
+    "omissions": []
+  },
+  {
+    "slug": "gateway-fast-path-evolution",
+    "document": "安全网关性能优化与高速数据面演进路线.md",
+    "sourceCommit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7",
+    "sourceSha256": "a5922a6e4e28b918c6e001b66b8b8268e3c62a90a9c344a184c40921f4cad649",
+    "bodySha256": "1d554486bd728d2f85c9895a698337f141dc762193e5a2817d10873c2a920f55",
+    "omissions": []
+  },
+  {
+    "slug": "gateway-evolution-map",
+    "document": "安全网关未来技术路线总览.md",
+    "sourceCommit": "fcbdb1820c2da92c7fa90efd93f777c9826709d7",
+    "sourceSha256": "c3bfced8127beec0ccd88309a1653bdaf99a9c13ded5d29d1b48a90373828488",
+    "bodySha256": "a0fc35c3bf5b1eb05542124888fc85899831c3a656cedd4cdb86b9020c76bbae",
+    "omissions": [
+      "第 2 节内部背景或非技术规划"
+    ]
+  },
+  {
+    "slug": "crypto-provider-kdf-map",
+    "document": "密码卡、Provider、SDF、PQC与IKE KDF接口地图.md",
+    "sourceCommit": "c9076bbe64d4657f968ef3d0f228af309cbcc44b",
+    "sourceSha256": "667a3a83d2b2e84091664e26693db07ed26221eaec853909a8ad9ba97c33f5a6",
+    "bodySha256": "45815b409a5a687d0085acc047c9c6afb26148ab901849dc59614f26bb2918d6",
+    "omissions": [
+      "机构称谓与个人本机路径已泛化；技术推导保留"
+    ]
+  },
+  {
+    "slug": "standard-source-evidence",
+    "document": "标准到源码到证据的验收体系.md",
+    "sourceCommit": "83c3e0609007c2540131ad08925bc2f3d8e325d8",
+    "sourceSha256": "6023b94f73b89d966a7290700fba168a804db8e5061929e5f4fe003f5419c68e",
+    "bodySha256": "2ef425ed2c7f3448fcbb1054ca31f67b7678e793b808fa9635abba32bb28d210",
+    "omissions": []
+  },
+  {
+    "slug": "gateway-industry-paths",
+    "document": "综合安全VPN网关演进路线与业界实践.md",
+    "sourceCommit": "0bc9b30d22b90c6380d693c04778290936e03342",
+    "sourceSha256": "91e398e1ce0b63c4ac8aa76ba1ee28ffc95a35fb5573ad4858ffdc9d8a9c708e",
+    "bodySha256": "2a965748bb514680a0d5848da8df0f11963d1f126f1af12bdc30bec480a5e062",
+    "omissions": [
+      "第 9 节内部背景或非技术规划",
+      "第 11 节内部背景或非技术规划"
+    ]
+  },
+  {
+    "slug": "gateway-network-glossary",
+    "document": "网络与安全网关基础概念词典.md",
+    "sourceCommit": "0bc9b30d22b90c6380d693c04778290936e03342",
+    "sourceSha256": "76b6db4b31abe105d06b1a63cd4006493c2e0c5b2d38afdd9eb5837b00a00b38",
+    "bodySha256": "e73c06ba78c107de87b1d9e50cf2f0c4f45a8eedbb852b88221741c24ff8b672",
+    "omissions": []
+  },
+  {
+    "slug": "network-programming-guide",
+    "document": "网络编程专题导览：从Socket到VPN网关.md",
+    "sourceCommit": "32d9b03c62ed7a611995849550d4fe82fb1393fe",
+    "sourceSha256": "442688a5de5fb7179910ec63356312c1efea301c9774db18eb5993ae6e5638ff",
+    "bodySha256": "5cd80840541694781b8e6a63f4a49b15c63a39d8feae76e828d3893d22a53170",
+    "omissions": []
+  },
+  {
+    "slug": "nonblocking-epoll",
+    "document": "非阻塞I-O、epoll与连接状态机.md",
+    "sourceCommit": "32d9b03c62ed7a611995849550d4fe82fb1393fe",
+    "sourceSha256": "0e4804065029d4234e2050bc8232560c48e3648d39690a3c1ab8f2f24e944164",
+    "bodySha256": "0d9e814dbd5415cd67fd124ef5160da01456836592069082bf3d2b2b1cf1c02b",
+    "omissions": []
   }
 ]

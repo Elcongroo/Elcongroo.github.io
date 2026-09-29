@@ -1,26 +1,26 @@
 ---
 title: "Linux内核收发包路径：NAPI、sk_buff、路由与Socket"
-description: "一个包从网卡进入 Linux 以后，怎样被送给本机进程或转发出去；反向发送时又怎样到达网卡。"
+description: "沿网卡、NAPI、sk_buff、路由和 Socket 跟踪收发包。"
 date: "2026-09-29"
 updated: "2026-09-29"
 category: "linux"
-tags: ["Linux", "NAPI", "sk_buff", "Socket"]
+modules: ["linux"]
+editorial: "original"
+tags: ["Linux 网络系统"]
 kind: "技术笔记"
 minutes: 20
 featured: false
 series: "Linux 网络系统"
-seriesOrder: 1
+seriesOrder: 4
 difficulty: "进阶"
-prerequisites: ["基本 IP 路由与用户态／内核态概念"]
-environment: ["文档选刊；本次发布未新增运行实验"]
-software: ["Linux；原文未固定统一内核版本，具体调用与接口须核对目标版本"]
+prerequisites: ["按正文的概念解释、源码入口与关联文章补齐前置知识"]
+environment: ["原稿整理；本次发布未新增运行实验"]
+software: ["以正文分别引用的内核、协议和工具版本为准"]
 conclusion: "public"
 realVerified: false
-verificationActor: "原文源码解读与资料分析；不标记为实测结果"
-repository: "https://docs.kernel.org/networking/index.html"
-basis: {"label": "Linux 官方文档", "href": "https://docs.kernel.org/networking/index.html", "boundary": "保留 VPN 文档原文的技术推导；版本和验证边界见正文。"}
-provenance: {"title": "Linux内核收发包路径：NAPI、sk_buff、路由与Socket", "mode": "原文选刊", "omissions": []}
-changes: [{"date": "2026-09-29", "note": "按 VPN 文档原文选刊，保留技术内容、源码坐标和图示；调整网页排版与站内链接。"}]
+verificationActor: "保留原稿的源码分析、资料判断与实验边界；未将文档迁移视为新增实测"
+provenance: {"title": "Linux内核收发包路径：NAPI、sk_buff、路由与Socket", "mode": "原稿收录", "omissions": []}
+changes: [{"date": "2026-09-29", "note": "收录技术原稿；调整标题层级、网页图示与站内链接。"}]
 ---
 
 本篇只解决一个问题：**一个包从网卡进入Linux以后，怎样被送给本机进程或转发出去；反向发送时又怎样到达网卡。**

@@ -43,6 +43,15 @@ for(const name of ['rss.xml','sitemap.xml','robots.txt','pagefind/pagefind.js'])
 const rss=fs.readFileSync(path.join(root,'rss.xml'),'utf8');
 const sitemap=fs.readFileSync(path.join(root,'sitemap.xml'),'utf8');
 const indexed=[...html.values()].filter(s=>s.includes('data-pagefind-body')).length;
+// Astro may log a content render error yet finish the build. Never publish a silently missing article.
+for(const file of fs.readdirSync('src/content/posts').filter(f=>/\.mdx?$/.test(f))){
+  const source=fs.readFileSync(path.join('src/content/posts',file),'utf8');
+  const frontmatter=source.split('\n---\n')[0];
+  if(/^draft:\s*true\s*$/m.test(frontmatter))continue;
+  const slug=file.replace(/\.mdx?$/,'');
+  if(!html.has(path.join(root,`articles/${slug}/index.html`)))errors.push(`${slug}: source article missing from build`);
+  if(/^editorial:\s*["']?research["']?\s*$/m.test(frontmatter)&&!html.get(path.join(root,`articles/${slug}/index.html`))?.includes('待 congroo 审阅'))errors.push(`${slug}: research review label missing`);
+}
 const rssCount=[...rss.matchAll(/<item>/g)].length;
 if(rssCount!==indexed)errors.push(`RSS items ${rssCount} differ from indexable content ${indexed}`);
 const redirects=[...html.values()].filter(s=>s.includes('http-equiv="refresh"')).length;

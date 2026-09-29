@@ -2,52 +2,100 @@
 import Base from '../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { pathFor } from '../lib/paths';
-import { stack, crossSections } from '../data/system-stack';
+import { stack, crossSections, flows } from '../data/system-stack';
 import '../styles/stack.css';
 const posts=await getCollection('posts',({data})=>!data.draft);
 const lookup=new Map(posts.map(p=>[p.id,p]));
-const rows=[['product'],['management'],['control'],['ipsec','tls'],['crypto'],['provider'],['xfrm'],['linux'],['platform'],['performance'],['fast-path'],['rdma']];
+const preferred:Record<string,string[]>={ipsec:['strongswan-config-ike-sa','strongswan-packet-task','strongswan-key-derivation','strongswan-child-sa-xfrm','strongswan-ip-packet-esp'],tls:['openvpn-config-context','openvpn-control-tls','openvpn-data-channel-keys','tls-openvpn-data-channel','openvpn-receive-tun','openvpn-dco-keys'],linux:['linux-kernel-guide','linux-packet-path','tun-packet-path','netfilter-conntrack-nat','linux-xfrm-esp'],provider:['crypto-provider-kdf-map','openvpn-tongsuo-dual-cert','crypto-agility-evolution'],xfrm:['strongswan-child-sa-xfrm','strongswan-ip-packet-esp','linux-xfrm-esp']};
+const modules=stack.map(node=>({...node,posts:[...new Set([...(preferred[node.id]||node.articles),...posts.filter(p=>p.data.modules.includes(node.id)).sort((a,b)=>Number(a.data.editorial==='research')-Number(b.data.editorial==='research')||a.data.series.localeCompare(b.data.series)||a.data.seriesOrder-b.data.seriesOrder).map(p=>p.id)])].map(id=>lookup.get(id)!).filter(Boolean)}));
+const rows=[{label:'系统与策略',ids:['product','management','control']},{label:'协议控制',ids:['ipsec','tls']},{label:'密码与接口',ids:['crypto','provider']},{label:'内核与数据',ids:['xfrm','linux']},{label:'平台与测量',ids:['platform','performance']},{label:'高速路径与支线',ids:['fast-path','rdma']}];
+const originalCount=posts.filter(p=>p.data.editorial==='original').length;
+const related=(id:string)=>[...new Set(flows.flatMap(f=>f.steps.flatMap((s,i)=>s.module===id?[f.steps[i-1]?.module,f.steps[i+1]?.module]:[])).filter((s):s is string=>!!s&&s!==id))];
 ---
-<Base title="技术主线" description="高性能安全通信系统栈：从协议控制面、密码工程到 Linux 数据面与性能分析，按技术模块阅读 congroo 的源码笔记。">
-  <div class="shell stack-page">
-    <header class="stack-header"><div><div class="page-kicker">SYSTEM STACK / 技术主线</div><h1>高性能安全通信系统栈</h1><p>协议、密码、内核与性能，放在同一张图里读。</p></div><a href={pathFor('articles/')}>全部文章 ↗</a></header>
-    <div class="stack-caption"><p>选自我的完整技术框架。<strong>点选模块，查看相关源码解读。</strong></p><span>13 个技术模块 / 4 条横向线索</span></div>
-    <div class="stack-layout" data-stack-map>
-      <figure class="system-map" id="technical-map">
-        <figcaption><span>01—13 / 技术分层</span><span>层次关系，非报文执行顺序</span></figcaption>
-        <div class="map-layers">{rows.map((row,index)=><div class:list={['map-row',`columns-${row.length}`,{'row-first':index===0}]}>{row.map(id=>{const node=stack.find(n=>n.id===id)!;return <a href={`#${node.id}`} data-module={node.id} class:list={['map-module',node.group]}><span class="module-top"><span class="module-number">{node.no}</span><span class="module-count">{node.articles.length?`${node.articles.length} 篇 ↗`:'未选刊'}</span></span><strong>{node.title}</strong><span class="module-brief">{node.brief}</span></a>;})}</div>)}</div>
-        <div class="map-cross-links"><span>横向贯穿</span><a href="#cross-pqc">PQC 迁移 ↘</a><a href="#cross-network-conditions">特殊网络场景 ↘</a><a href="#cross-languages">编程与自动化 ↘</a><a href="#cross-toolchain">工具链 ↘</a></div>
-      </figure>
-      <aside class="stack-reader" aria-label="模块详情与文章">
-        <div class="reader-label"><span>从框架进入正文</span><a class="return-to-map" href="#technical-map">↑ 返回框架</a><span class="reader-arrow" aria-hidden="true">↙</span></div>
-        {stack.map(node=><section id={node.id} class:list={['module-reading',node.group]} data-reading={node.id} tabindex="-1">
-          <p class="reader-coordinate">LAYER {node.no} / {node.english}</p><h2>{node.title}</h2>
-          <div class="module-articles"><h3>相关文章</h3>{node.articles.length?<ol>{node.articles.map(id=>{const post=lookup.get(id);return post&&<li><a href={pathFor(`articles/${id}/`)}>{post.data.title}<span aria-hidden="true">↗</span></a><small>{post.data.kind} · 约 {post.data.minutes} 分钟</small></li>;})}</ol>:<p class="module-unpublished">这一模块尚未选刊文章，先保留技术位置。</p>}</div>
-          <details class="module-scope" open><summary>原框架中的技术范围</summary><dl>{node.scope.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details>
-        </section>)}
-        <p class="stack-reader-note">图中的条目表示研究范围；文章里的分析和实验各自标注版本与验证状态。</p>
-      </aside>
-    </div>
-    <section class="cross-section" aria-labelledby="cross-heading"><header><div class="page-kicker">CROSS-CUTTING CONCERNS</div><h2 id="cross-heading">贯穿各层的问题与工具</h2><p>这些内容会同时影响多个模块，在框架旁边保留独立的位置。</p></header><div class="cross-grid">{crossSections.map(item=><article id={`cross-${item.id}`}><span class="cross-subtitle">{item.subtitle}</span><h3>{item.title}</h3><ul>{item.terms.map(t=><li>{t}</li>)}</ul><div class="cross-related">{item.links.map(id=><a href={`#${id}`} data-module={id}>{stack.find(n=>n.id===id)!.title} ↗</a>)}</div></article>)}</div></section>
-    <footer class="stack-source"><span>框架来源</span><p>《高性能安全通信系统栈》中的技术部分，保留原图 01–13 的模块编号与横向线索。网页将长图重排为模块导航，原图中的示意性能数字不作为实验结果展示。</p></footer>
+<Base title="技术主线" description="沿 IKE、ESP、OpenVPN 与 PQC 的交接关系，阅读高性能安全通信系统栈中的技术原稿与研究笔记。">
+ <div class="shell stack-page">
+  <header class="stack-header"><div><div class="page-kicker">SYSTEM STACK / 技术主线</div><h1>高性能安全通信系统栈</h1><p>从层次看职责，从路径看交接，从文章看细节。</p></div><a href={pathFor('articles/')}>全部 {posts.length} 篇文章 ↗</a></header>
+  <div class="stack-caption"><p><strong>{originalCount} 份技术原稿</strong>与 {posts.filter(p=>p.data.editorial==='research').length} 篇补充研究，放回各自的技术位置。</p><span>13 个模块 / 4 条路径 / 4 条横向线索</span></div>
+  <section class="flow-explorer" aria-labelledby="flow-title">
+   <header><h2 id="flow-title">先看一条实际关系</h2><span>箭头说明交接，不表示所有层都要逐包经过</span></header>
+   <div class="flow-tabs" role="group" aria-label="选择运行路径">{flows.map((f,i)=><button type="button" data-flow-choice={f.id} aria-pressed={i===0?'true':'false'}>{f.name}</button>)}</div>
+   {flows.map((flow,index)=><div class="flow-view" data-flow-view={flow.id} hidden={index!==0}>
+    <div class="flow-kind">{flow.kind}</div>
+    <ol class="flow-rail" style={`--flow-steps:${flow.steps.length}`}>{flow.steps.map((step,i)=><li><button type="button" data-flow-step={i} data-flow-module={step.module} aria-pressed="false"><span class="flow-step-num">{String(i+1).padStart(2,'0')}</span><strong>{step.label}</strong><small>{step.output}</small></button>{i<flow.steps.length-1&&<span class="flow-edge" aria-hidden="true">→</span>}</li>)}</ol>
+    <p class="flow-boundary">{flow.boundary}</p>
+   </div>)}
+   <div class="flow-inspector"><p data-flow-note aria-live="polite">选择一条路径，然后逐步查看每次交接。</p><div class="flow-controls"><button type="button" data-flow-prev aria-label="上一步">←</button><button type="button" data-flow-play>播放交接</button><button type="button" data-flow-next aria-label="下一步">→</button><a href="#technical-map">查看对应模块 ↓</a></div></div>
+   <noscript><p>运行路径的分步演示需要 JavaScript；下方完整分层与全部文章仍可直接阅读。</p></noscript>
+  </section>
+  <div class="stack-layout" data-stack-map>
+   <figure class="system-map" id="technical-map">
+    <figcaption><span>完整分层 / 保留原框架 01—13 编号</span><span>点选模块，打开右侧文章索引 →</span></figcaption>
+    <div class="map-layers">{rows.map(row=><div class="map-group"><span class="map-group-label">{row.label}</span><div class:list={['map-row',`columns-${row.ids.length}`]}>{row.ids.map(id=>{const node=modules.find(n=>n.id===id)!;return <a href={`#${id}`} data-module={id} class:list={['map-module',node.group]}><span class="module-top"><span class="module-number">{node.no}</span><span class="module-count">{node.posts.length} 篇</span></span><strong>{node.title}</strong><span class="module-brief">{node.brief}</span><span class="module-selected">正在查看 ↗</span></a>;})}</div></div>)}</div>
+    <div class="map-cross-links"><span>横向贯穿</span>{crossSections.map(c=><a href={`#cross-${c.id}`}>{c.title} ↘</a>)}</div>
+   </figure>
+   <aside class="stack-reader" aria-label="模块详情与文章">
+    <div class="reader-label"><span data-reader-status aria-live="polite">从框架进入正文</span><a class="return-to-map" href="#technical-map">↑ 返回框架</a><span class="reader-arrow" aria-hidden="true">↙</span></div>
+    {modules.map(node=><section id={node.id} class:list={['module-reading',node.group]} data-reading={node.id} tabindex="-1">
+     <div class="reader-title"><span class="reader-big-number" aria-hidden="true">{node.no}</span><div><p class="reader-coordinate">{node.english}</p><h2>{node.title}</h2></div></div>
+     <p class="reader-summary">{node.brief}</p>
+     <div class="module-articles"><h3>{node.posts.length} 篇相关文章 <a href={pathFor(`articles/?module=${node.id}`)}>完整目录 ↗</a></h3><ol>{node.posts.slice(0,5).map(post=><li><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}<span aria-hidden="true">↗</span></a><small>{post.data.editorial==='research'?'补充研究 · 待审阅':post.data.kind} · 约 {post.data.minutes} 分钟</small></li>)}</ol>{node.posts.length>5&&<details class="more-module-posts"><summary>再看 {node.posts.length-5} 篇</summary><ol>{node.posts.slice(5).map(post=><li><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}<span aria-hidden="true">↗</span></a><small>{post.data.editorial==='research'?'补充研究 · 待审阅':post.data.kind}</small></li>)}</ol></details>}</div>
+     {related(node.id).length>0&&<div class="module-neighbors"><h3>在上方路径中与这些模块交接</h3>{related(node.id).map(id=><a href={`#${id}`} data-module={id}>{modules.find(m=>m.id===id)?.title} ↗</a>)}</div>}
+     <details class="module-scope"><summary>原框架中的技术范围</summary><dl>{node.scope.map(([label,value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}</dl></details>
+    </section>)}
+    <p class="stack-reader-note">模块表示研究范围；补充研究稿尚待审阅，不能等同于已经完成实现或实验。</p>
+   </aside>
   </div>
-  <script>
-    const map=document.querySelector<HTMLElement>('[data-stack-map]');
-    if(map){
-      const panels=[...map.querySelectorAll<HTMLElement>('[data-reading]')];
-      const links=[...document.querySelectorAll<HTMLAnchorElement>('[data-module]')];
-      const select=(id:string,focus=false)=>{
-        const panel=panels.find(p=>p.dataset.reading===id);
-        if(!panel)return false;
-        panels.forEach(p=>p.hidden=p!==panel);
-        links.forEach(a=>{const active=a.dataset.module===id;a.classList.toggle('is-active',active);if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
-        if(focus){panel.focus({preventScroll:true});if(matchMedia('(max-width: 800px)').matches)panel.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});}
-        return true;
-      };
-      map.classList.add('map-enhanced');
-      select(location.hash.slice(1))||select('linux');
-      links.forEach(a=>a.addEventListener('click',event=>{if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;const id=a.dataset.module!;if(select(id,true)){event.preventDefault();history.pushState(null,'',`#${id}`);}}));
-      window.addEventListener('popstate',()=>{select(location.hash.slice(1))||select('linux');});
-    }
-  </script>
+  <section class="cross-section" aria-labelledby="cross-heading"><header><div class="page-kicker">CROSS-CUTTING CONCERNS</div><h2 id="cross-heading">贯穿各层的问题与工具</h2><p>它们横向约束多个模块，不另造一层报文处理。</p></header><div class="cross-grid">{crossSections.map(item=><article id={`cross-${item.id}`}><span class="cross-subtitle">{item.subtitle}</span><h3>{item.title}</h3><ul>{item.terms.map(t=><li>{t}</li>)}</ul><div class="cross-related">{item.links.map(id=><a href={`#${id}`} data-module={id}>{stack.find(n=>n.id===id)!.title} ↗</a>)}</div></article>)}</div></section>
+  <footer class="stack-source"><span>框架与路径</span><p>模块与横向线索来自《高性能安全通信系统栈》的技术部分。交接路径依据对应源码笔记提炼；运行配置、消息交换与业务数据路径分别解释，图中没有性能结果。RDMA 保留为独立研究支线。</p></footer>
+ </div>
+ <script>
+  import { flows } from '../data/system-stack';
+  const map=document.querySelector<HTMLElement>('[data-stack-map]');
+  if(map){
+   const panels=[...map.querySelectorAll<HTMLElement>('[data-reading]')];
+   const links=[...document.querySelectorAll<HTMLAnchorElement>('[data-module]')];
+   const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+   let current='';
+   const select=(id:string,focus=false)=>{
+    const panel=panels.find(p=>p.dataset.reading===id);if(!panel)return false;
+    panels.forEach(p=>p.hidden=p!==panel);
+    links.forEach(a=>{const active=a.dataset.module===id;a.classList.toggle('is-active',active);if(active)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current');});
+    if(current!==id)map.querySelector<HTMLElement>('.stack-reader')!.scrollTop=0;
+    if(current!==id&&!reduced.matches)panel.animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:260,easing:'ease-out'});
+    current=id;document.querySelector('[data-reader-status]')!.textContent=`正在查看 · ${panel.querySelector('h2')!.textContent}`;
+    if(focus){panel.focus({preventScroll:true});if(matchMedia('(max-width: 800px)').matches)panel.scrollIntoView({block:'start',behavior:reduced.matches?'instant':'smooth'});}
+    return true;
+   };
+   map.classList.add('map-enhanced');
+   const choices=[...document.querySelectorAll<HTMLButtonElement>('[data-flow-choice]')];
+   let flow=flows[0],step=-1,timer:ReturnType<typeof setTimeout>|undefined;
+   const play=document.querySelector<HTMLButtonElement>('[data-flow-play]')!;
+   const stop=()=>{clearTimeout(timer);timer=undefined;play.textContent=reduced.matches?'逐步查看':'播放交接';play.setAttribute('aria-pressed','false');};
+   const showStep=(index:number)=>{
+    step=Math.max(0,Math.min(index,flow.steps.length-1));const item=flow.steps[step];
+    document.querySelectorAll<HTMLElement>('[data-flow-view]').forEach(v=>{v.hidden=v.dataset.flowView!==flow.id;v.querySelectorAll<HTMLElement>('[data-flow-step]').forEach(b=>{const n=Number(b.dataset.flowStep);b.setAttribute('aria-pressed',String(n===step));b.closest('li')?.classList.toggle('step-passed',n<step);});});
+    document.querySelector('[data-flow-note]')!.textContent=`${step+1} / ${flow.steps.length} · ${item.note}`;
+    select(item.module);
+    document.querySelector<HTMLButtonElement>('[data-flow-prev]')!.disabled=step===0;
+    document.querySelector<HTMLButtonElement>('[data-flow-next]')!.disabled=step===flow.steps.length-1;
+   };
+   choices.forEach(b=>b.addEventListener('click',()=>{stop();flow=flows.find(f=>f.id===b.dataset.flowChoice)!;choices.forEach(c=>c.setAttribute('aria-pressed',String(c===b)));showStep(0);}));
+   document.querySelectorAll<HTMLButtonElement>('[data-flow-step]').forEach(b=>b.addEventListener('click',()=>{stop();showStep(Number(b.dataset.flowStep));}));
+   document.querySelector('[data-flow-prev]')!.addEventListener('click',()=>{stop();showStep(step-1);});
+   document.querySelector('[data-flow-next]')!.addEventListener('click',()=>{stop();showStep(step+1);});
+   const advance=()=>{if(step>=flow.steps.length-1){stop();return;}showStep(step+1);timer=setTimeout(advance,2200);};
+   play.addEventListener('click',()=>{if(timer){stop();return;}if(reduced.matches){showStep(step>=flow.steps.length-1?0:step+1);return;}showStep(step>=flow.steps.length-1?0:Math.max(step,0));play.textContent='暂停';play.setAttribute('aria-pressed','true');timer=setTimeout(advance,2200);});
+   document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});window.addEventListener('pagehide',stop);
+   const selectModule=(id:string,focus=false)=>{
+    if(!panels.some(p=>p.dataset.reading===id))return false;
+    const match=flow.steps.findIndex(s=>s.module===id);
+    if(match>=0)showStep(match);
+    else{step=-1;document.querySelectorAll('[data-flow-step]').forEach(b=>b.setAttribute('aria-pressed','false'));document.querySelectorAll('.step-passed').forEach(b=>b.classList.remove('step-passed'));document.querySelector('[data-flow-note]')!.textContent='自由查看模块。选择上方步骤可继续这条路径。';document.querySelector<HTMLButtonElement>('[data-flow-prev]')!.disabled=true;document.querySelector<HTMLButtonElement>('[data-flow-next]')!.disabled=false;}
+    return select(id,focus);
+   };
+   links.forEach(a=>a.addEventListener('click',event=>{if(event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;const id=a.dataset.module!;stop();if(selectModule(id,true)){event.preventDefault();history.pushState(null,'',`#${id}`);}}));
+   selectModule(location.hash.slice(1))||selectModule('ipsec');stop();reduced.addEventListener('change',stop);
+   window.addEventListener('popstate',()=>{stop();selectModule(location.hash.slice(1))||selectModule('ipsec');});
+  }
+ </script>
 </Base>

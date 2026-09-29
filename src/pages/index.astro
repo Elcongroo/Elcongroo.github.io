@@ -11,7 +11,7 @@ import { pathFor } from '../lib/paths';
 import { categories, formatDate, site } from '../lib/site';
 const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>Number(b.data.featured)-Number(a.data.featured)||b.data.updated.valueOf()-a.data.updated.valueOf()||a.data.seriesOrder-b.data.seriesOrder);
 const firstPost=posts[0];
-const corePosts=posts.filter(p=>p.data.provenance&&p.id!==firstPost?.id).sort((a,b)=>publications.findIndex(s=>s.slug===a.id)-publications.findIndex(s=>s.slug===b.id));
+const corePosts=posts.filter(p=>p.data.provenance&&p.id!==firstPost?.id).sort((a,b)=>publications.findIndex(s=>s.slug===a.id)-publications.findIndex(s=>s.slug===b.id)).slice(0,6);
 const supplements=posts.filter(p=>!p.data.provenance&&p.id!==firstPost?.id);
 const grouped=Object.entries(categories).map(([key,value])=>({key,...value,count:posts.filter(p=>p.data.category===key).length})).filter(c=>c.count>0);
 const labs=(await getCollection('lab',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf());
@@ -45,10 +45,10 @@ const [titleSubject,...titleRest]=firstPost?.data.title.split('：')??[];
         </article>}
         {corePosts.length>0&&<section class="journal-entries" aria-labelledby="more-writing">
           <div class="section-heading"><h2 id="more-writing">源码解读与技术思考</h2><a href={pathFor('journey/')}>技术框架图 <span aria-hidden="true">↗</span></a></div>
-          <p class="series-introduction">从 VPN 文档选刊。保留原文的函数链、图示和技术判断，按问题阅读。</p>
-          {corePosts.map(post=><PostRow post={post} compact/>)}
+          <p class="series-introduction">已收录 {publications.length} 份技术原稿。这里列出几个入口，完整系列见文章目录。</p>
+          {corePosts.map(post=><PostRow post={post} compact/>)}<a class="all-manuscripts" href={pathFor('articles/')}>按系列阅读全部 {posts.length} 篇文章 →</a>
         </section>}
-        {supplements.length>0&&<section class="supplemental-reading" aria-labelledby="supplement-title"><div class="section-heading"><h2 id="supplement-title">实验与补充</h2><a href={pathFor('articles/')}>全部 {posts.length} 篇 ↗</a></div><ul>{supplements.map(post=><li><span>{post.data.kind}</span><a href={pathFor(`articles/${post.id}/`)}>{post.data.title} ↗</a></li>)}</ul></section>}
+        {supplements.length>0&&<section class="supplemental-reading" aria-labelledby="supplement-title"><div class="section-heading"><h2 id="supplement-title">实验与补充研究</h2><a href={pathFor('articles/')}>全部 {posts.length} 篇 ↗</a></div><ul>{supplements.map(post=><li><span>{post.data.kind}</span><a href={pathFor(`articles/${post.id}/`)}>{post.data.title} ↗</a></li>)}</ul></section>}
       </div>
       <aside class="journal-aside">
         <section class="author-note">

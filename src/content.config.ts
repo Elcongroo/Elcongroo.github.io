@@ -16,6 +16,8 @@ const posts = defineCollection({
     takeaway: z.string().optional(),
     basis: z.object({ label: z.string(), href: z.string(), boundary: z.string() }).optional(),
     category: z.enum(['vpn', 'linux', 'crypto', 'pqc', 'performance', 'engineering']),
+    modules: z.array(z.string()).default([]),
+    editorial: z.enum(['original', 'research', 'experiment']).default('experiment'),
     tags: z.array(z.string()),
     kind: z.string(),
     minutes: z.number().positive(),

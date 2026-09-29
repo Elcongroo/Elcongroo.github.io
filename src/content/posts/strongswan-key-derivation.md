@@ -1,26 +1,28 @@
 ---
 title: "strongSwan 五链源码精读 03：Proposal、KE与Nonce如何变成密钥"
-description: "区分 Proposal、密钥交换和 KDF，沿 keymat_v2 追踪 IKE 与 CHILD_SA 的双向密钥，再对照 IKEv1 路径。"
+description: "区分 Proposal、密钥交换与 KDF，追踪 IKE 和 CHILD_SA 双向密钥。"
 date: "2026-09-29"
 updated: "2026-09-29"
 category: "crypto"
-tags: ["strongSwan", "IKEv2", "KDF", "IPsec"]
+modules: ["ipsec", "crypto"]
+editorial: "original"
+tags: ["strongSwan", "IKEv2", "strongSwan 五链源码精读"]
 kind: "源码精读"
 minutes: 20
 featured: false
 series: "strongSwan 五链源码精读"
 seriesOrder: 3
 difficulty: "进阶"
-prerequisites: ["基本 IP 路由与用户态／内核态概念"]
-environment: ["文档选刊；本次发布未新增运行实验"]
-software: ["strongSwan 6.0.3 / 472dcd8bb50a91f156b725ff56992352b573f7dd"]
+prerequisites: ["按正文的概念解释、源码入口与关联文章补齐前置知识"]
+environment: ["原稿整理；本次发布未新增运行实验"]
+software: ["strongSwan 6.0.3；源码快照与本地适配边界见正文"]
 conclusion: "source"
 realVerified: false
-verificationActor: "原文源码解读与资料分析；不标记为实测结果"
+verificationActor: "保留原稿的源码分析、资料判断与实验边界；未将文档迁移视为新增实测"
+provenance: {"title": "strongSwan 五链源码精读 03：Proposal、KE与Nonce如何变成密钥", "mode": "原稿收录", "omissions": []}
+changes: [{"date": "2026-09-29", "note": "收录技术原稿；调整标题层级、网页图示与站内链接。"}]
 repository: "https://github.com/strongswan/strongswan/tree/472dcd8bb50a91f156b725ff56992352b573f7dd"
-basis: {"label": "strongSwan 6.0.3 源码", "href": "https://github.com/strongswan/strongswan/tree/472dcd8bb50a91f156b725ff56992352b573f7dd", "boundary": "保留 VPN 文档原文的技术推导；版本和验证边界见正文。"}
-provenance: {"title": "strongSwan 五链源码精读 03：Proposal、KE与Nonce如何变成密钥", "mode": "原文选刊", "omissions": []}
-changes: [{"date": "2026-09-29", "note": "按 VPN 文档原文选刊，保留技术内容、源码坐标和图示；调整网页排版与站内链接。"}]
+basis: {"label": "strongSwan 6.0.3 源码", "href": "https://github.com/strongswan/strongswan/tree/472dcd8bb50a91f156b725ff56992352b573f7dd", "boundary": "上游分析、本地适配与实验记录的区别以原文标注为准。"}
 ---
 
 > 源码基线：strongSwan 6.0.3，commit `472dcd8bb50a91f156b725ff56992352b573f7dd`<br>

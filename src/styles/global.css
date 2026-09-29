@@ -179,3 +179,4 @@ img,svg{max-width:100%} ::selection{background:var(--accent);color:var(--paper)}
 @media print { .site-footer { display: none; } }
 
 .source-provenance{font:.75rem/1.9 var(--sans);border-left:2px solid var(--accent);padding-left:14px;color:var(--muted);margin:20px 0}.source-provenance>span{font-weight:650;color:var(--ink);margin-right:12px}.source-provenance small{display:block;font-size:inherit;margin-top:5px}
+.research-notice{border-left:3px solid var(--warning);padding:12px 18px;margin:20px 0 25px;font:.8125rem/1.9 var(--sans)}.research-notice strong{color:var(--warning);font-weight:600}.research-notice p{margin:7px 0 0}.all-manuscripts{display:block;margin:22px 0;font:.8125rem/1.8 var(--sans);text-decoration:underline}

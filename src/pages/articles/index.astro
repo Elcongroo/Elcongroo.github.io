@@ -1,38 +1,43 @@
 ---
 import Base from '../../layouts/Base.astro';
-import PostRow from '../../components/PostRow.astro';
 import Search from '../../components/Search.astro';
 import { getCollection } from 'astro:content';
 import { pathFor } from '../../lib/paths';
 import { categories } from '../../lib/site';
-const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>b.data.date.valueOf()-a.data.date.valueOf() || Number(b.data.featured)-Number(a.data.featured));
-const years=[...new Set(posts.map(p=>p.data.date.getUTCFullYear()))].sort((a,b)=>b-a);
-const visibleCategories=Object.entries(categories).filter(([id])=>posts.some(p=>p.data.category===id));
+import '../../styles/archive.css';
+const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>a.data.seriesOrder-b.data.seriesOrder);
+const seriesOrder=['strongSwan 五链源码精读','OpenVPN 六链源码精读','Linux 网络系统','网络编程','协议与网络基础','strongSwan 架构与方法','strongSwan 专题精读','OpenVPN 架构与方法','OpenVPN 专题精读','国密协议与改造','PQC 与密码接口','网关系统设计','性能与工程验证','协议实验记录','系统栈：接口与边界'];
+const names=[...new Set(posts.map(p=>p.data.series))].sort((a,b)=>(seriesOrder.includes(a)?seriesOrder.indexOf(a):99)-(seriesOrder.includes(b)?seriesOrder.indexOf(b):99));
+const series=names.map((name,i)=>({name,id:`series-${i+1}`,posts:posts.filter(p=>p.data.series===name)}));
+const originalCount=posts.filter(p=>p.data.editorial==='original').length;
 ---
-<Base title="文章"><div class="shell"><header class="page-head"><div class="page-kicker">WRITING / 文章归档</div><h1>文章与笔记</h1><p>内核、IPsec / TLS 与高性能网络，以及支撑它们的小实验。</p><p class="archive-intro-note">当前 {posts.length} 篇文章。也可以从 <a href={pathFor('journey/')}>技术框架图</a> 找到对应模块的源码解读。</p></header><Search/><section class="archive"><div class="category-filter" role="group" aria-label="按文章分类筛选" hidden><button data-category="all" aria-pressed="true">全部</button>{visibleCategories.map(([id,c])=><button data-category={id} aria-pressed="false">{c.label}</button>)}</div><div id="tag-selection" class="tag-selection" hidden><span id="selected-tag"></span><button id="clear-tag" type="button">清除标签 ×</button></div>{years.map(year=><section data-year-group><h2 class="archive-year" id={`year-${year}`}>{year}</h2>{posts.filter(p=>p.data.date.getUTCFullYear()===year).map(post=><div data-post-category={post.data.category} data-post-tags={JSON.stringify(post.data.tags)}><PostRow post={post}/></div>)}</section>)}<p id="category-empty" class="empty-note" hidden>当前筛选下没有文章。</p><p id="category-count" class="small muted" aria-live="polite">{posts.length} 篇文章</p></section></div></Base>
+<Base title="文章"><div class="shell writing-archive"><header class="page-head"><div class="page-kicker">WRITING / 文章归档</div><h1>文章与笔记</h1><p>沿着一条源码链读下去，也可以从一个具体问题开始。</p><p class="archive-intro-note">{originalCount} 份技术原稿 · {posts.filter(p=>p.data.editorial==='research').length} 篇补充研究稿 · {posts.filter(p=>p.data.editorial==='experiment').length} 篇独立实验。<a href={pathFor('journey/')}>在系统栈中定位 ↗</a></p></header><Search/>
+ <nav class="series-directory" aria-label="按系列跳转"><h2>系列目录</h2><div>{series.map(s=><a href={`#${s.id}`} data-series-link={s.id}><span>{s.name}</span><small>{String(s.posts.length).padStart(2,'0')}</small></a>)}</div></nav>
+ <section class="archive"><div class="archive-controls" hidden><div class="category-filter" role="group" aria-label="按文章分类筛选"><button data-category="all" aria-pressed="true">全部</button>{Object.entries(categories).map(([id,c])=><button data-category={id} aria-pressed="false">{c.label}</button>)}</div><div class="editorial-filter"><label for="editorial-filter">稿件</label><select id="editorial-filter"><option value="all">全部稿件</option><option value="original">技术原稿</option><option value="research">补充研究 · 待审阅</option><option value="experiment">独立实验</option></select><span id="category-count" aria-live="polite">{posts.length} 篇文章</span></div><div id="tag-selection" class="tag-selection" hidden><span id="selected-tag"></span><button id="clear-tag" type="button">清除限定 ×</button></div></div>
+ {series.map(s=><section class="archive-series" data-series-group={s.id} id={s.id}><header><h2>{s.name}</h2><span>{s.posts.length} 篇</span></header>{s.posts.map((p,i)=><article class="archive-entry" data-post-category={p.data.category} data-post-tags={JSON.stringify(p.data.tags)} data-post-modules={JSON.stringify(p.data.modules)} data-editorial={p.data.editorial}><span class="archive-entry-number">{String(i+1).padStart(2,'0')}</span><div><h3><a href={pathFor(`articles/${p.id}/`)}>{p.data.title}</a></h3><p>{p.data.description}</p><div class="archive-entry-meta"><span class:list={['editorial-mark',{'research-mark':p.data.editorial==='research'}]}>{p.data.editorial==='research'?'补充研究 · 待作者审阅':p.data.editorial==='original'?'技术原稿':'独立实验'}</span><span>{p.data.conclusion==='source'?'源码分析':p.data.conclusion==='verified'?'附实验材料':'资料与原稿记录'}</span><span>约 {p.data.minutes} 分钟</span></div></div><a class="archive-read" href={pathFor(`articles/${p.id}/`)} aria-label={`阅读 ${p.data.title}`}>↗</a></article>)}</section>)}
+ <p id="category-empty" class="empty-note" hidden>当前筛选下没有文章。</p>
+ </section>
+ <aside class="archive-policy"><h2>收录说明</h2><p>原稿保留技术推导、源码坐标与图示；涉及机构背景与本机目录的地方做公开版处理。内部任务安排、采购与职业规划不进入公开文章库。新增补充稿列出公开依据和待验证项，审阅状态单独显示。</p><p>本批文档于 2026 年 9 月 29 日整理发布；原稿中的实验日期与版本说明以正文为准，不将整理日期倒填为历史发表日期。</p><a href={pathFor('downloads/network-examples.zip')}>配套网络编程示例与快照脚本 ↓</a></aside>
+ </div></Base>
 <script>
-const controls=document.querySelector<HTMLElement>('.category-filter')!;
-controls.hidden=false;
-const rows=[...document.querySelectorAll<HTMLElement>('[data-post-category]')];
-const params=new URLSearchParams(location.search);
-const requestedCategory=params.get('category');
-let category=requestedCategory&&[...controls.querySelectorAll<HTMLElement>('button')].some(b=>b.dataset.category===requestedCategory)?requestedCategory:'all';
-let tag=params.get('tag')||'';
-function filter() {
+ import { stack } from '../../data/system-stack';
+ const controls=document.querySelector<HTMLElement>('.archive-controls')!;controls.hidden=false;
+ const rows=[...document.querySelectorAll<HTMLElement>('[data-post-category]')];
+ const params=new URLSearchParams(location.search);
+ let category=params.get('category')||'all';let tag=params.get('tag')||'';let module=params.get('module')||'';
+ const editorial=document.querySelector<HTMLSelectElement>('#editorial-filter')!;
+ if(['original','research','experiment'].includes(params.get('editorial')||''))editorial.value=params.get('editorial')!;
+ function filter(update=false){
   let count=0;
-  for(const row of rows) {
-    const tags=JSON.parse(row.dataset.postTags||'[]') as string[];
-    const allowed=(category==='all'||row.dataset.postCategory===category)&&(!tag||tags.includes(tag));
-    row.hidden=!allowed;if(allowed)count++;
-  }
-  controls.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===category)));
-  document.querySelector<HTMLElement>('#category-empty')!.hidden=count>0;
-  document.querySelector('#category-count')!.textContent=`${count} 篇文章`;
-  document.querySelector<HTMLElement>('#tag-selection')!.hidden=!tag;
-  document.querySelector('#selected-tag')!.textContent=tag?`标签：${tag}`:'';
-  document.querySelectorAll<HTMLElement>('[data-year-group]').forEach(group=>{group.hidden=![...group.querySelectorAll<HTMLElement>('[data-post-category]')].some(row=>!row.hidden);});
-}
-controls.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.category!;filter();}));
-document.querySelector('#clear-tag')!.addEventListener('click',()=>{tag='';filter();});
-filter();
+  rows.forEach(row=>{const tags=JSON.parse(row.dataset.postTags||'[]') as string[];const modules=JSON.parse(row.dataset.postModules||'[]') as string[];const show=(category==='all'||row.dataset.postCategory===category)&&(!tag||tags.includes(tag))&&(!module||modules.includes(module))&&(editorial.value==='all'||row.dataset.editorial===editorial.value);row.hidden=!show;if(show)count++;});
+  document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===category)));
+  document.querySelector<HTMLElement>('#category-empty')!.hidden=count>0;document.querySelector('#category-count')!.textContent=`${count} 篇文章`;
+  document.querySelector<HTMLElement>('#tag-selection')!.hidden=!tag&&!module;document.querySelector('#selected-tag')!.textContent=[module?`模块：${stack.find(s=>s.id===module)?.title||module}`:'',tag?`标签：${tag}`:''].filter(Boolean).join(' · ');
+  document.querySelectorAll<HTMLElement>('[data-series-group]').forEach(group=>{const visible=[...group.querySelectorAll<HTMLElement>('[data-post-category]')].filter(r=>!r.hidden).length;group.hidden=!visible;group.querySelector('header>span')!.textContent=`${visible} 篇`;const link=document.querySelector<HTMLAnchorElement>(`[data-series-link="${group.dataset.seriesGroup}"]`)!;link.hidden=!visible;link.querySelector('small')!.textContent=String(visible).padStart(2,'0');});
+  if(update){const p=new URLSearchParams();if(category!=='all')p.set('category',category);if(tag)p.set('tag',tag);if(module)p.set('module',module);if(editorial.value!=='all')p.set('editorial',editorial.value);history.replaceState(null,'',location.pathname+(p.size?'?'+p.toString():''));}
+ }
+ document.querySelectorAll<HTMLButtonElement>('[data-category]').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.category!;filter(true);}));
+ document.querySelector('#clear-tag')!.addEventListener('click',()=>{tag='';module='';filter(true);});editorial.addEventListener('change',()=>filter(true));
+ if(![...document.querySelectorAll<HTMLButtonElement>('[data-category]')].some(b=>b.dataset.category===category))category='all';
+ filter();
 </script>

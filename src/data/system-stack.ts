@@ -22,3 +22,32 @@ export const crossSections = [
   {id:'languages',title:'编程与自动化',subtitle:'贯穿各层的工程工具',terms:['C → Linux 底层 / 内核','C++ → VPN / 网关 / 系统服务','Python / Shell / Go → 自动化 / 测试 / Benchmark / 运维'],links:['linux','performance']},
   {id:'toolchain',title:'调试与工程工具链',subtitle:'观测、复现与交付',terms:['Wireshark / tcpdump → 网络协议','gdb / strace / perf / Flamegraph → 系统与性能','iproute2 / nft / iptables / tc / netem → 网络环境','Git / CI / CMake / Build System / Unit / Integration / Fuzz / ASan'],links:['ipsec','linux','performance']},
 ];
+
+/** Each path is a bounded explanation, not a complete protocol trace. */
+export const flows = [
+ {id:'ike',name:'IKE → 内核 SA',kind:'控制面交接',boundary:'示意普通 IKEv2 初始建链的职责交接；多重 KE、EAP 和重协商需要展开各自流程。',steps:[
+  {module:'management',label:'连接配置',output:'VICI / swanctl',note:'配置定义身份、Proposal 与 Traffic Selector；加载成功不等于连接已经建立。'},
+  {module:'ipsec',label:'IKE 初始交换',output:'Proposal / KE / Nonce',note:'IKE_SA_INIT 协商参数并交换 KE 与 Nonce；身份认证还没有完成。'},
+  {module:'crypto',label:'IKE 密钥派生',output:'keymat → IKE keys',note:'初始共享秘密按 IKEv2 规则进入 KDF，产生保护后续交换及认证所需的密钥材料。'},
+  {module:'ipsec',label:'认证与首个 CHILD',output:'IKE_AUTH / CHILD keys',note:'在受保护的 IKE_AUTH 中认证身份并协商首个 CHILD_SA；keymat 再派生 CHILD 方向密钥。'},
+  {module:'xfrm',label:'安装 SA 与策略',output:'Netlink → state / policy',note:'kernel-netlink 把 CHILD_SA 交给 Linux。业务是否受保护，还要观察策略命中、ESP 与计数。'},
+ ]},
+ {id:'esp',name:'业务包 → ESP',kind:'出站数据路径',boundary:'这里展示 Linux 内核 XFRM 的出站处理。用户态 ESP 与硬件卸载需要分别核对。',steps:[
+  {module:'linux',label:'明文业务包',output:'Socket / 转发 → 路由',note:'包可能来自本机，也可能来自转发入口；先确定方向、路由和匹配范围。'},
+  {module:'xfrm',label:'策略与 SA',output:'policy lookup → state',note:'XFRM 找到需要的保护策略与对应 SA；IKE 守护进程不逐包转发这段业务。'},
+  {module:'xfrm',label:'ESP 处理',output:'序列号 / 加密 / 封装',note:'出站 SA 驱动序列号和密码处理。对端入站还要执行认证、防重放和策略检查。'},
+  {module:'linux',label:'外层发包',output:'队列 → 驱动 → NIC',note:'外层 IP/ESP 或 NAT-T 包进入发送路径；定位瓶颈时再看队列、CPU 与驱动统计。'},
+ ]},
+ {id:'openvpn',name:'TUN → OpenVPN',kind:'用户态数据路径',boundary:'此处是用户态数据通道发送路径；TLS 控制通道提供密钥基础，业务包不是逐个进入 TLS Record。DCO 是另一分支。',steps:[
+  {module:'linux',label:'从 TUN 读包',output:'read_incoming_tun',note:'路由送入 TUN 的业务 IP 包成为用户态输入；先检查接口方向与包边界。'},
+  {module:'tls',label:'选择数据密钥',output:'encrypt_sign / key state',note:'OpenVPN 的数据路径选择可用 key state，控制通道与业务通道在此处保持分工。'},
+  {module:'crypto',label:'数据通道加密',output:'AEAD / cipher + HMAC',note:'使用数据通道方向密钥完成保护；TLS/TLCP 控制密钥不能与这组密钥混为一谈。'},
+  {module:'linux',label:'外层 Socket',output:'process_outgoing_link',note:'封装后的外层包写入 UDP/TCP Socket，再由内核发送。切到 DCO 后需要另查真实运行路径。'},
+ ]},
+ {id:'pqc',name:'PQC 接入边界',kind:'能力依赖关系',boundary:'这是一组必须闭合的接口，不是可随意替换的通用 KEM 握手；线上交换与 KDF 组合遵循具体协议。',steps:[
+  {module:'control',label:'算法与回退策略',output:'允许 / 要求 / 禁止降级',note:'策略规定必须满足的安全条件；能力不足时是否回退需要显式决策。'},
+  {module:'ipsec',label:'线上交换',output:'Transform / 额外 KE',note:'对端必须理解相同的协议表达、消息顺序与交换语义，不能只在本机注册算法。'},
+  {module:'provider',label:'实际算法实现',output:'软件 / Provider / 设备',note:'检查创建对象、执行运算、错误与设备状态；加载成功并不证明运算真的走了目标实现。'},
+  {module:'crypto',label:'秘密进入 KDF',output:'共享秘密 → 协议密钥',note:'确认真实输出被状态机消费并参与协议规定的派生；然后另查 CHILD_SA 与业务数据面。'},
+ ]},
+];

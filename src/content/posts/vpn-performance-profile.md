@@ -1,27 +1,30 @@
 ---
 title: "Linux网络性能与排障：队列、软中断、观测与高速路径"
-description: "把网卡队列、软中断、CPU 分布、卸载、XFRM 和 OpenVPN 用户态放到同一张性能地图中，按计数与 Profile 定位瓶颈。"
+description: "结合队列、软中断、CPU 分布与计数定位网络性能问题。"
 date: "2026-09-29"
 updated: "2026-09-29"
 category: "performance"
-tags: ["perf", "NAPI", "RSS", "AF_XDP", "DPDK"]
+modules: ["performance", "fast-path", "linux"]
+editorial: "original"
+tags: ["Linux 网络系统"]
 kind: "技术笔记"
 minutes: 20
 featured: false
 series: "Linux 网络系统"
-seriesOrder: 3
+seriesOrder: 5
 difficulty: "进阶"
-prerequisites: ["基本 IP 路由与用户态／内核态概念"]
-environment: ["文档选刊；本次发布未新增运行实验"]
-software: ["Linux；原文未固定统一内核版本，具体调用与接口须核对目标版本"]
+prerequisites: ["按正文的概念解释、源码入口与关联文章补齐前置知识"]
+environment: ["原稿整理；本次发布未新增运行实验"]
+software: ["以正文分别引用的内核、协议和工具版本为准"]
 conclusion: "public"
 realVerified: false
-verificationActor: "原文源码解读与资料分析；不标记为实测结果"
-repository: "https://docs.kernel.org/networking/index.html"
-basis: {"label": "Linux 官方文档", "href": "https://docs.kernel.org/networking/index.html", "boundary": "保留 VPN 文档原文的技术推导；版本和验证边界见正文。"}
-provenance: {"title": "Linux网络性能与排障：队列、软中断、观测与高速路径", "mode": "节选", "omissions": ["第 11 节配套快照工具（未随本次选刊发布）"]}
-changes: [{"date": "2026-09-29", "note": "按 VPN 文档原文选刊，保留技术内容、源码坐标和图示；调整网页排版与站内链接。 本次未选刊原文第 11 节配套脚本部分。"}]
+verificationActor: "保留原稿的源码分析、资料判断与实验边界；未将文档迁移视为新增实测"
+provenance: {"title": "Linux网络性能与排障：队列、软中断、观测与高速路径", "mode": "原稿收录", "omissions": []}
+changes: [{"date": "2026-09-29", "note": "收录技术原稿；调整标题层级、网页图示与站内链接。"}]
 ---
+
+> **配套材料**：本文引用的网络编程示例与只读快照脚本见[源码与使用说明](/downloads/network-examples.zip)。解压后保留 `examples/` 目录结构；脚本未在本次发布中重新实测。
+
 
 性能优化的第一原则不是“使用更快的技术”，而是找出时间和CPU究竟消耗在哪一层。
 
@@ -324,6 +327,41 @@ DPDK使用用户态轮询驱动、HugePage、批处理和显式队列管理绕�
 | 网络栈 | 是否出现协议错误、重传、软中断积压 | `nstat`、`ss -ti`、softnet统计 |
 | 设备 | ring、drop、IRQ、链路是否异常 | `ethtool -S/-l/-k`、接口统计、interrupts |
 | CPU/内存 | 哪个核和函数饱和，是否跨NUMA | `perf`、每核CPU、NUMA与亲和性 |
+
+---
+
+## 11. 配套快照工具怎样使用
+
+仓库`examples/linux-kernel-network-path/inspect_kernel_network.sh`提供只读快照。它不会修改网络配置，会把当时的接口、路由、Socket、Netfilter、Conntrack、XFRM、软中断和队列状态分别保存为原始文本。
+
+先手工执行并理解最关键的命令：
+
+```bash
+ip -s link
+ip route show table all
+ip rule show
+ss -s
+nstat -az
+ip -s xfrm state  # 本地核对；输出可能含会话密钥，不得直接外发
+ip -s xfrm policy
+cat /proc/softirqs
+cat /proc/net/xfrm_stat
+```
+
+再运行自动快照：
+
+```bash
+cd examples/linux-kernel-network-path
+./inspect_kernel_network.sh /tmp/kernel-net-before
+```
+
+压测或复现后再次执行：
+
+```bash
+./inspect_kernel_network.sh /tmp/kernel-net-after
+```
+
+比较两次目录，重点看差值。输出可能包含IP、接口、规则和本机拓扑，不要未经脱敏提交到仓库或对外发送。XFRM State中的会话密钥由脚本在内存管道中替换为`<redacted-key>`，不会以原文写入快照。
 
 ---
 
