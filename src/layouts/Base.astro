@@ -46,9 +46,9 @@ const nav = [['首页',''],['文章','articles/'],['分类','topics/'],['实验'
       </div>
     </header>
     <main id="main"><slot /></main>
-    <footer class="site-footer shell" data-pagefind-ignore>
-      <div><a href={pathFor()}>{site.title}</a><span class="footer-note">个人技术博客 · 文章、学习笔记与独立实验。</span></div>
-      <div><a href={site.github} rel="noopener noreferrer">GitHub</a><a href={pathFor('rss.xml')}>RSS</a><a href={pathFor('about/#editorial')}>内容与修订原则</a><span>© {new Date().getFullYear()} {site.author}</span></div>
+    <footer class="publication-footer" data-pagefind-ignore>
+      <div class="shell footer-main"><div><a class="footer-signature" href={pathFor()}>{site.title}<span aria-hidden="true">.</span></a><p>文章、学习笔记与独立实验。<br/>具体的问题，慢慢写清楚。</p></div><div class="footer-directory"><div><span>阅读</span><a href={pathFor('articles/')}>文章归档</a><a href={pathFor('lab/')}>实验手记</a><a href={pathFor('topics/')}>按主题读</a></div><div><span>关于与订阅</span><a href={pathFor('about/')}>关于 congroo</a><a href={site.github}>GitHub ↗</a><a href={pathFor('subscribe/')}>RSS 订阅 ↗</a></div></div></div>
+      <div class="shell footer-colophon"><span>© {new Date().getFullYear()} {site.author}</span><a href={pathFor('about/#editorial')}>内容与修订原则</a><a href="#main">回到正文 ↑</a></div>
     </footer>
     <script>
       const button = document.querySelector<HTMLButtonElement>('#theme-toggle')!;
