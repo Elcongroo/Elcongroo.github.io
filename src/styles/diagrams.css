@@ -1,0 +1,22 @@
+/* Diagram ink belongs to the diagram, not to navigation or warning accents. */
+.diagram-viewport {
+  --diagram-edge: #626f67;
+  --diagram-border: #8a968e;
+}
+:root[data-theme='dark'] .diagram-viewport {
+  --diagram-edge: #b1c0b6;
+  --diagram-border: #899d90;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .diagram-viewport {
+    --diagram-edge: #b1c0b6;
+    --diagram-border: #899d90;
+  }
+}
+.diagram-viewport:focus-visible {
+  outline: 2px solid var(--diagram-edge);
+  outline-offset: 3px;
+}
+.diagram-viewport svg {
+  margin-inline: auto;
+}

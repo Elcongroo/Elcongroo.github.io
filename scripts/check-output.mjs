@@ -58,6 +58,15 @@ const redirects=[...html.values()].filter(s=>s.includes('http-equiv="refresh"'))
 if([...sitemap.matchAll(/<url>/g)].length!==html.size-1-redirects)errors.push('Sitemap does not cover all normal HTML pages');
 for (const [file, content] of html) {
   if(content.includes('class="diagram-viewport"')&&!content.includes('<svg'))errors.push(`${file}: build-time protocol SVG missing`);
+  // Browsers silently drop duplicate attributes; this once erased every diagram's palette.
+  for (const match of content.matchAll(/<svg\b[^>]*data-protocol-diagram[^>]*>[\s\S]*?<\/svg>/g)) {
+    const svg = match[0];
+    const tag = svg.slice(0, svg.indexOf('>') + 1);
+    if ([...tag.matchAll(/\bstyle="/g)].length !== 1) errors.push(`${file}: diagram needs exactly one root style`);
+    if (/--([\w-]+)\s*:\s*var\(--\1\)/.test(svg)) errors.push(`${file}: self-referencing diagram color`);
+    if (/<style>[\s\S]*?(?:^|[}\n])\s*(?:svg|text|\.mono)\s*\{/m.test(svg)) errors.push(`${file}: unscoped diagram style`);
+    if (svg.includes('--protocol-bg:') && !svg.includes('--protocol-bg:var(--paper)')) errors.push(`${file}: diagram background lost theme binding`);
+  }
 }
 // Imported prose must remain consistent with the selected manuscript snapshot.
 const sources=JSON.parse(fs.readFileSync('src/data/publication-sources.json','utf8'));
