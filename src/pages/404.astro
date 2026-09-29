@@ -1,0 +1,5 @@
+---
+import Base from '../layouts/Base.astro';
+import {pathFor} from '../lib/paths';
+---
+<Base title="页面未找到"><div class="shell"><header class="page-head"><div class="page-kicker">404 / PATH NOT FOUND</div><h1>这个地址没有对应记录。</h1><p>页面可能改过路径。请从文章目录继续查找。</p><a class="outline-link" href={pathFor('articles/')}>查看文章目录</a></header></div></Base>

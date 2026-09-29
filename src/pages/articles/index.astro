@@ -1,0 +1,37 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostRow from '../../components/PostRow.astro';
+import Search from '../../components/Search.astro';
+import { getCollection } from 'astro:content';
+import { categories } from '../../lib/site';
+const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>b.data.date.valueOf()-a.data.date.valueOf() || Number(b.data.featured)-Number(a.data.featured));
+const years=[...new Set(posts.map(p=>p.data.date.getUTCFullYear()))].sort((a,b)=>b-a);
+const visibleCategories=Object.entries(categories).filter(([id])=>posts.some(p=>p.data.category===id));
+---
+<Base title="文章"><div class="shell"><header class="page-head"><div class="page-kicker">WRITING / 文章归档</div><h1>文章与笔记</h1><p>已经写下的 {posts.length} 篇文章。按主题读，也可以搜索正文。</p></header><Search/><section class="archive"><div class="category-filter" role="group" aria-label="按文章分类筛选" hidden><button data-category="all" aria-pressed="true">全部</button>{visibleCategories.map(([id,c])=><button data-category={id} aria-pressed="false">{c.label}</button>)}</div><div id="tag-selection" class="tag-selection" hidden><span id="selected-tag"></span><button id="clear-tag" type="button">清除标签 ×</button></div>{years.map(year=><section data-year-group><h2 class="archive-year" id={`year-${year}`}>{year}</h2>{posts.filter(p=>p.data.date.getUTCFullYear()===year).map(post=><div data-post-category={post.data.category} data-post-tags={JSON.stringify(post.data.tags)}><PostRow post={post}/></div>)}</section>)}<p id="category-empty" class="empty-note" hidden>当前筛选下没有文章。</p><p id="category-count" class="small muted" aria-live="polite">{posts.length} 篇文章</p></section></div></Base>
+<script>
+const controls=document.querySelector<HTMLElement>('.category-filter')!;
+controls.hidden=false;
+const rows=[...document.querySelectorAll<HTMLElement>('[data-post-category]')];
+const params=new URLSearchParams(location.search);
+const requestedCategory=params.get('category');
+let category=requestedCategory&&[...controls.querySelectorAll<HTMLElement>('button')].some(b=>b.dataset.category===requestedCategory)?requestedCategory:'all';
+let tag=params.get('tag')||'';
+function filter() {
+  let count=0;
+  for(const row of rows) {
+    const tags=JSON.parse(row.dataset.postTags||'[]') as string[];
+    const allowed=(category==='all'||row.dataset.postCategory===category)&&(!tag||tags.includes(tag));
+    row.hidden=!allowed;if(allowed)count++;
+  }
+  controls.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.category===category)));
+  document.querySelector<HTMLElement>('#category-empty')!.hidden=count>0;
+  document.querySelector('#category-count')!.textContent=`${count} 篇文章`;
+  document.querySelector<HTMLElement>('#tag-selection')!.hidden=!tag;
+  document.querySelector('#selected-tag')!.textContent=tag?`标签：${tag}`:'';
+  document.querySelectorAll<HTMLElement>('[data-year-group]').forEach(group=>{group.hidden=![...group.querySelectorAll<HTMLElement>('[data-post-category]')].some(row=>!row.hidden);});
+}
+controls.querySelectorAll<HTMLButtonElement>('button').forEach(b=>b.addEventListener('click',()=>{category=b.dataset.category!;filter();}));
+document.querySelector('#clear-tag')!.addEventListener('click',()=>{tag='';filter();});
+filter();
+</script>

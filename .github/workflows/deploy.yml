@@ -1,0 +1,46 @@
+name: Publish congroo blog
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out blog source
+        uses: actions/checkout@v7
+      - name: Read Pages origin and base path
+        id: pages
+        uses: actions/configure-pages@v6
+      - name: Build Astro, index with Pagefind, and upload
+        uses: withastro/action@v6
+        with:
+          node-version: 24
+          package-manager: npm
+          build-cmd: npm run check && npm run build && npm run check:output
+        env:
+          SITE_URL: ${{ steps.pages.outputs.origin }}
+          BASE_PATH: ${{ steps.pages.outputs.base_path }}
+          PUBLIC_SITE: 'true'
+          ASTRO_TELEMETRY_DISABLED: '1'
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Publish static site
+        id: deployment
+        uses: actions/deploy-pages@v5

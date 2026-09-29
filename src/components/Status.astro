@@ -1,0 +1,7 @@
+---
+import { conclusionStates } from '../lib/site';
+interface Props { state: keyof typeof conclusionStates; full?: boolean; }
+const { state, full = false } = Astro.props;
+const status = conclusionStates[state];
+---
+<span class:list={['status', `status-${state}`]} title={status.label}><span class="status-glyph" aria-hidden="true">{state === 'verified' ? '✓' : state === 'pending' ? '?' : '—'}</span>{full ? status.label : status.short}</span>

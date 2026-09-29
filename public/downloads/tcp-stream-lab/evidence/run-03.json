@@ -1,0 +1,204 @@
+{
+  "experiment": "tcp-stream-length-framing-v2",
+  "source_sha256": "12ebd5b920a1054389a44e93f6d522f51e81e2253f5a6543cce4bf49db36292f",
+  "started_at_utc": "2026-09-29T03:56:13+00:00",
+  "environment": {
+    "python": "3.14.4",
+    "python_implementation": "CPython",
+    "os": "Linux",
+    "kernel": "7.0.0-34-generic",
+    "architecture": "x86_64",
+    "bind_address": "127.0.0.1",
+    "port_selection": "OS-assigned ephemeral port",
+    "socket_and_event_timeout_seconds": 2.0,
+    "max_message_length": 4096
+  },
+  "scope": "Application-visible recv results; no packet capture and no inference about TCP segments or packets.",
+  "cases": [
+    {
+      "case": "normal",
+      "passed": true,
+      "duration_seconds": 0.001662,
+      "input": {
+        "payload_ascii": "cipher-to-packet",
+        "payload_hex": "6369706865722d746f2d7061636b6574",
+        "payload_length": 16,
+        "prefix_ascii": "cipher-t",
+        "suffix_ascii": "o-packet",
+        "length_header": "uint32 big-endian"
+      },
+      "recv_calls": [
+        {
+          "phase": "length_header",
+          "requested": 4,
+          "received": 4,
+          "hex": "00000010",
+          "ascii": "\u0000\u0000\u0000\u0010"
+        },
+        {
+          "phase": "payload_first",
+          "requested": 16,
+          "received": 8,
+          "hex": "6369706865722d74",
+          "ascii": "cipher-t"
+        },
+        {
+          "phase": "payload_remaining",
+          "requested": 8,
+          "received": 8,
+          "hex": "6f2d7061636b6574",
+          "ascii": "o-packet"
+        }
+      ],
+      "assembled_payload_ascii": "cipher-to-packet",
+      "assembled_payload_hex": "6369706865722d746f2d7061636b6574",
+      "assertions": {
+        "sender_finished_within_timeout": true,
+        "sender_has_no_errors": true,
+        "declared_length_matches_input": true,
+        "first_payload_recv_is_incomplete": true,
+        "no_unexpected_exception": true,
+        "length_framing_recovers_exact_message": true,
+        "no_premature_eof": true
+      },
+      "unexpected_failure": null,
+      "sender_errors": [],
+      "trace": [
+        {
+          "event": "recv_returned",
+          "phase": "length_header",
+          "requested": 4,
+          "received": 4,
+          "hex": "00000010",
+          "ascii": "\u0000\u0000\u0000\u0010"
+        },
+        {
+          "event": "recv_returned",
+          "phase": "payload_first",
+          "requested": 16,
+          "received": 8,
+          "hex": "6369706865722d74",
+          "ascii": "cipher-t"
+        },
+        {
+          "event": "sendall_returned",
+          "write": 1,
+          "bytes": 12,
+          "hex": "000000106369706865722d74"
+        },
+        {
+          "event": "sendall_returned",
+          "write": 2,
+          "bytes": 8,
+          "hex": "6f2d7061636b6574"
+        },
+        {
+          "event": "shutdown_write"
+        },
+        {
+          "event": "recv_returned",
+          "phase": "payload_remaining",
+          "requested": 8,
+          "received": 8,
+          "hex": "6f2d7061636b6574",
+          "ascii": "o-packet"
+        }
+      ]
+    },
+    {
+      "case": "early_eof",
+      "passed": true,
+      "duration_seconds": 0.000428,
+      "input": {
+        "payload_ascii": "cipher-to-packet",
+        "payload_hex": "6369706865722d746f2d7061636b6574",
+        "payload_length": 16,
+        "prefix_ascii": "cipher-t",
+        "suffix_ascii": "o-packet",
+        "length_header": "uint32 big-endian"
+      },
+      "recv_calls": [
+        {
+          "phase": "length_header",
+          "requested": 4,
+          "received": 4,
+          "hex": "00000010",
+          "ascii": "\u0000\u0000\u0000\u0010"
+        },
+        {
+          "phase": "payload_first",
+          "requested": 16,
+          "received": 8,
+          "hex": "6369706865722d74",
+          "ascii": "cipher-t"
+        },
+        {
+          "phase": "payload_remaining",
+          "requested": 8,
+          "received": 0,
+          "hex": "",
+          "ascii": ""
+        }
+      ],
+      "assembled_payload_ascii": "cipher-t",
+      "assembled_payload_hex": "6369706865722d74",
+      "assertions": {
+        "sender_finished_within_timeout": true,
+        "sender_has_no_errors": true,
+        "declared_length_matches_input": true,
+        "first_payload_recv_is_incomplete": true,
+        "no_unexpected_exception": true,
+        "premature_eof_is_detected": true,
+        "only_prefix_is_received": true,
+        "incomplete_message_is_not_accepted": true
+      },
+      "unexpected_failure": null,
+      "sender_errors": [],
+      "trace": [
+        {
+          "event": "sendall_returned",
+          "write": 1,
+          "bytes": 12,
+          "hex": "000000106369706865722d74"
+        },
+        {
+          "event": "recv_returned",
+          "phase": "length_header",
+          "requested": 4,
+          "received": 4,
+          "hex": "00000010",
+          "ascii": "\u0000\u0000\u0000\u0010"
+        },
+        {
+          "event": "recv_returned",
+          "phase": "payload_first",
+          "requested": 16,
+          "received": 8,
+          "hex": "6369706865722d74",
+          "ascii": "cipher-t"
+        },
+        {
+          "event": "intentional_early_eof",
+          "omitted_bytes": 8
+        },
+        {
+          "event": "shutdown_write"
+        },
+        {
+          "event": "recv_returned",
+          "phase": "payload_remaining",
+          "requested": 8,
+          "received": 0,
+          "hex": "",
+          "ascii": ""
+        },
+        {
+          "event": "expected_failure_detected",
+          "type": "PrematureEOF",
+          "message": "expected 16 payload bytes, received 8"
+        }
+      ]
+    }
+  ],
+  "passed": true
+}

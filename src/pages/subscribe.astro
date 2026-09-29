@@ -1,0 +1,11 @@
+---
+import Base from '../layouts/Base.astro';
+import {site} from '../lib/site';
+import {pathFor,absoluteUrl} from '../lib/paths';
+const feed=absoluteUrl('rss.xml',Astro.site!);
+---
+<Base title="RSS 订阅"><div class="shell"><header class="page-head"><div class="page-kicker">RSS / 更新订阅</div><h1>在阅读器里接收新记录</h1><p>订阅包含文章与实验日志的标题、摘要和原文链接。</p></header><div class="prose" style="max-width:760px;padding-bottom:50px">{!site.isPublic&&<blockquote>当前为仅本人可见的预览。正式公开后，外部 RSS 阅读器才能获取更新。</blockquote>}<div class="subscribe-box"><label for="feed-url">RSS 地址</label><input id="feed-url" value={feed} readonly/><button class="plain-button" id="copy-feed" hidden>复制地址</button><div class="copy-status" id="copy-status" aria-live="polite"></div></div><p>在支持 RSS 的阅读器中添加上面的地址即可。你也可以收藏<a href={pathFor('articles/')}>文章目录</a>。本站暂不收集邮箱。</p><p><a href={pathFor('rss.xml')}>查看订阅文件</a></p></div></div></Base>
+<script>
+const button=document.querySelector<HTMLButtonElement>('#copy-feed')!;button.hidden=false;
+button.addEventListener('click',async()=>{const input=document.querySelector<HTMLInputElement>('#feed-url')!;const status=document.querySelector('#copy-status')!;try{await navigator.clipboard.writeText(input.value);status.textContent='已复制。';}catch{input.focus();input.select();status.textContent='请手动复制已选中的地址。';}});
+</script>

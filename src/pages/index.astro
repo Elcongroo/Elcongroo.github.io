@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import PostRow from '../components/PostRow.astro';
+import { getCollection } from 'astro:content';
+import { pathFor } from '../lib/paths';
+import { categories, formatDate, site } from '../lib/site';
+const posts=(await getCollection('posts',({data})=>!data.draft)).sort((a,b)=>b.data.updated.valueOf()-a.data.updated.valueOf()||Number(b.data.featured)-Number(a.data.featured));
+const labs=(await getCollection('lab',({data})=>!data.draft)).sort((a,b)=>b.data.date.valueOf()-a.data.date.valueOf());
+const grouped=Object.entries(categories).map(([key,value])=>({key,...value,count:posts.filter(p=>p.data.category===key).length})).filter(c=>c.count>0);
+const tags=[...new Set(posts.flatMap(p=>p.data.tags))];
+const years=[...new Set(posts.map(p=>p.data.date.getUTCFullYear()))].sort((a,b)=>b-a);
+const recent=labs[0];
+---
+<Base>
+  <div class="shell personal-home">
+    <div class="blog-welcome"><p>技术、学习，以及做工程时的思考。</p><a href={pathFor('about/')}>认识一下作者 ↗</a></div>
+    <div class="blog-columns">
+      <div class="blog-feed">
+        <section aria-labelledby="latest-title"><header class="feed-heading"><div><h1 id="latest-title">最近文章</h1><span>{posts.length} 篇文章</span></div><a href={pathFor('articles/')}>全部文章 ↗</a></header><div class="home-posts">{posts.map(post=><PostRow post={post}/>)}</div></section>
+        {recent&&<section class="blog-lab" aria-labelledby="lab-title"><header class="section-heading"><h2 id="lab-title">实验笔记</h2><a href={pathFor('lab/')}>全部记录 ↗</a></header><div class="lab-journal-line"><div class="lab-date"><span>{recent.data.number}</span><time datetime={recent.data.date.toISOString()}>{formatDate(recent.data.date)}</time></div><div><h3><a href={pathFor(`lab/${recent.id}/`)}>{recent.data.title}</a></h3><p>{recent.data.result}</p><p class="lab-origin">{recent.data.performedBy}。环境：loopback / Python。</p><div class="journal-links"><a href={pathFor(`lab/${recent.id}/`)}>实验记录</a><a href={pathFor('downloads/tcp-stream-lab/tcp_stream_lab.py')}>代码</a><a href={pathFor('downloads/tcp-stream-lab/evidence/run-03.json')}>原始结果</a></div></div></div></section>}
+      </div>
+      <aside class="blog-sidebar">
+        <section class="profile-note"><div class="profile-title"><span class="profile-initial" aria-hidden="true">c.</span><div><h2>congroo</h2><span>工程师 / 这里的作者</span></div></div><p>目前在做密码网关研发，关注 VPN、密码库和 Linux 网络。把遇到的问题写下来，也给以后的自己留一份索引。</p><div class="profile-links"><a href={site.github}>GitHub ↗</a><a href={pathFor('subscribe/')}>RSS 订阅</a><a href={pathFor('about/')}>关于我</a></div></section>
+        <section class="sidebar-section"><h2>文章分类</h2><ul class="category-index">{grouped.map(c=><li><a href={pathFor(`articles/?category=${c.key}`)}><span>{c.label}</span><span class="count">{c.count}</span></a></li>)}</ul></section>
+        <section class="sidebar-section"><h2>标签</h2><div class="tag-index">{tags.map(tag=><a href={pathFor(`articles/?tag=${encodeURIComponent(tag)}`)}>{tag}</a>)}</div></section>
+        <section class="sidebar-section reading-now"><h2>最近在关注</h2><p>IPsec 显示“已连接”以后，怎样确认业务流量真正经过了预期的策略和 SA？</p><a href={pathFor('articles/vpn-connected-is-not-enough/')}>相关笔记 ↗</a></section>
+        <section class="sidebar-section"><h2>归档</h2><ul class="category-index">{years.map(year=><li><a href={pathFor(`articles/#year-${year}`)}><span>{year}</span><span class="count">{posts.filter(p=>p.data.date.getUTCFullYear()===year).length} 篇</span></a></li>)}</ul></section>
+        <section class="sidebar-section sidebar-editorial"><p>笔记会修订。实验、源码分析和公开资料分别标注，原始记录随文保留。</p><a href={pathFor('about/#editorial')}>内容与修订说明 ↗</a></section>
+      </aside>
+    </div>
+  </div>
+</Base>

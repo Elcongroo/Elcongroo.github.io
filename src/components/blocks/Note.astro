@@ -1,0 +1,8 @@
+---
+interface Props {
+  kind: '实验条件'|'关键证据'|'我的理解'|'容易误解'|'尚未确认'|'故障现场'|'源码入口'|'性能结论'|'安全边界';
+}
+const { kind } = Astro.props;
+const caution = ['容易误解','尚未确认','故障现场','安全边界'].includes(kind);
+---
+<aside class:list={['technical-note', { caution }]} aria-label={kind}><div class="note-label">{kind}</div><div class="note-body"><slot/></div></aside>

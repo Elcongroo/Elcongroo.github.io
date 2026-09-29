@@ -1,0 +1,191 @@
+---
+title: 'recv(16) 返回 8 字节之后，剩下的消息怎么办？'
+description: '一个受控的 loopback 实验：按长度收齐应用消息，并在提前 EOF 时拒绝残缺数据。'
+date: 2026-09-29
+updated: 2026-09-29
+category: linux
+tags: [TCP, recv, 消息边界, 验证方法]
+kind: 实验分析
+minutes: 8
+featured: true
+series: 从 Socket 到隧道
+seriesOrder: 1
+difficulty: 入门
+prerequisites: [能在终端启动 Python, 知道客户端与服务端的区别]
+environment: [Linux 7.0.0-34-generic / x86_64, 127.0.0.1 回环通信 / 系统分配临时端口]
+software: [CPython 3.14.4, Python 标准库 socket / threading]
+conclusion: verified
+realVerified: true
+verificationActor: Codex 执行；作者本人复现待完成
+evidence:
+  - label: 原始 JSON
+    path: downloads/tcp-stream-lab/evidence/run-03.json
+  - label: 实验脚本
+    path: downloads/tcp-stream-lab/tcp_stream_lab.py
+  - label: SHA-256 清单
+    path: downloads/tcp-stream-lab/SHA256SUMS
+changes:
+  - date: 2026-09-29
+    note: 完成正常读取与提前 EOF 两个自动用例；保留原始输出和脚本哈希。手工复现尚未验收。
+---
+import Note from '../../components/blocks/Note.astro';
+import Mermaid from '../../components/blocks/Mermaid.astro';
+import { pathFor } from '../../lib/paths';
+
+<Note kind="实验条件">
+这是为本站做的真实示例实验。**由 Codex 编写并执行，作者本人尚未手工复现。** 实验不属于公司产品验证，也没有测试任何 VPN 的实现。验证标记只覆盖文中两个用例。
+</Note>
+
+有一个 16 字节的应用消息。发送方调用了 `sendall()`，接收方调用 `recv(16)`。这里的 `16` 是“这条消息的完整长度”，还是“这次最多收多少字节”？
+
+先把问题缩小：不谈 TLS，不引入虚拟网卡，也不改系统路由。只用两端的 Socket 和一个容易核对的字节串。
+
+## 先约定消息长什么样
+
+本例自己定义一个很小的应用格式：四字节长度头，后面跟正文。长度头使用网络字节序；正文是 `cipher-to-packet`，共 16 字节。
+
+```text
+偏移       0x00              0x04                         0x14
+           ├──── 4 字节 ─────┼────────── 16 字节 ──────────┤
+内容       00 00 00 10       cipher-to-packet
+含义       正文长度 = 16     应用消息正文
+```
+
+这里的长度头是我们在实验中约定的，**不是 TCP 头里的字段**。TCP 提供按序字节流，应用消息边界由上层协议定义。[RFC 9293 §2.2](https://www.rfc-editor.org/rfc/rfc9293.html#section-2.2)
+
+## 让第一读故意遇不到后半段
+
+如果只是启动两个线程然后等一会儿，观察结果容易受调度影响。本例采用一个明确的同步条件：接收方第一读返回后，发送方才继续发送后半段。
+
+<Mermaid caption="正常用例的应用操作顺序。第一读完成通知属于测试同步，不是 TCP 协议消息；箭头也不表示 TCP 分段。" source={`sequenceDiagram
+    participant S as 发送线程
+    participant R as 接收线程
+    S->>R: 写入长度头与 cipher-t
+    R->>R: 收齐 4 字节长度头
+    R->>R: recv(16) 本次返回 8 字节
+    R-->>S: 测试同步：第一读已返回
+    S->>R: 写入 o-packet
+    R->>R: 继续读取至正文累计 16 字节
+`}/>
+
+发送方最初只写长度头和 `cipher-t`。因此，接收方的第一次正文读取不可能看见还没发送的 `o-packet`。本次运行第一读实际返回 8 字节；这不是“所有环境都固定返回 8”的承诺。
+
+## 原始记录说了什么
+
+执行开始于 **2026-09-29 03:56:13 UTC**，环境为 CPython 3.14.4、Linux 7.0.0-34-generic、x86_64。仅使用回环地址和系统分配的临时端口。
+
+| 用例 | 第一读正文 | 后续读取 | 判定 |
+| --- | --- | --- | --- |
+| 正常 | 请求 16，返回 8：`cipher-t` | 返回 8：`o-packet` | 累积恢复完整 16 字节消息 |
+| 提前 EOF | 请求 16，返回 8：`cipher-t` | 请求 8，返回空字节 | 检测残缺消息，没有当作成功接受 |
+
+<Note kind="关键证据">
+两个用例、15 项断言通过。表格依据<a href={pathFor('downloads/tcp-stream-lab/evidence/run-03.json')}>原始 JSON</a>整理；JSON 保留了每次请求长度、实际返回长度和字节内容，不是重建的终端截图。
+</Note>
+
+`recv(n)` 的参数是单次最大读取长度；对端关闭连接且已无可读数据时，返回空字节串。[Python `socket.recv` 文档](https://docs.python.org/3/library/socket.html#socket.socket.recv)
+
+## 先手工走一遍
+
+下面两段在同一台机器的两个终端中执行。先在两边运行 `python3 -q`：它启动 Python 交互解释器，`-q` 隐藏开场文字。看到 `>>>` 后输入代码，不要把提示符也复制进去。多行函数最后输入空行结束。
+
+**终端 A：接收端。** 先监听回环地址，端口 `0` 让系统选择空闲端口；记下打印的端口。无须管理员权限。
+
+```python
+import socket, struct
+listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+listener.settimeout(120)
+listener.bind(("127.0.0.1", 0))
+listener.listen(1)
+print(listener.getsockname()[1])
+```
+
+**终端 B：发送端。** 输入本轮实际端口，只发送前半，然后停下。
+
+```python
+import socket, struct
+port = int(input("输入终端 A 显示的端口："))
+sender = socket.create_connection(("127.0.0.1", port), timeout=120)
+sender.sendall(struct.pack("!I", 16) + b"cipher-t")
+```
+
+`!I` 约定四字节大端无符号整数，`b"..."` 表示字节串。第一写含长度头和 8 字节正文。
+
+**回到终端 A。** 先读完长度头，再故意只读一次正文。
+
+```python
+conn, _ = listener.accept()
+conn.settimeout(120)
+
+def read_exact(sock, count):
+    data = bytearray()
+    while len(data) < count:
+        chunk = sock.recv(count - len(data))
+        if not chunk:
+            raise EOFError("消息尚未读完，对端已关闭写方向")
+        data.extend(chunk)
+    return bytes(data)
+
+length = struct.unpack("!I", read_exact(conn, 4))[0]
+first = conn.recv(length)
+print(length, len(first), repr(first))
+```
+
+`length` 应为 16。`first` 应是不完整的前半正文，可能为 1～8 字节。本次自动记录为 8 字节。第二部分尚未写出，不能期待完整消息。
+
+**终端 B 继续发送，终端 A 累积收齐。** 下面第一段在 B 执行，第二段在 A 执行。
+
+```python
+sender.sendall(b"o-packet")
+sender.shutdown(socket.SHUT_WR)
+```
+
+```python
+remaining = read_exact(conn, length - len(first))
+message = first + remaining
+print(len(message), repr(message))
+assert message == b"cipher-to-packet"
+```
+
+`SHUT_WR` 关闭发送方向，不撤回已经写出的数据。完整消息到齐后，A 中依次运行 `conn.close()`、`listener.close()`，B 中运行 `sender.close()`，然后各自 `exit()`。没有系统配置需要恢复。
+
+## 故障现场：第二次写入没有发生
+
+重新走到“第一读正文”。这次在 B **跳过第二次 `sendall()`**，只执行 `sender.shutdown(socket.SHUT_WR)`。A 继续收剩余字节时，应当抛出 `EOFError`；异常后仍要按前面的方法关闭 Socket。
+
+<Note kind="故障现场">
+本次自动用例检测到的条件是：预期正文 16 字节，实际只收到 8 字节。连接结束不是“这条消息已经完整”的证明。若误把已有缓冲区交给上层，就会把截断消息当作有效输入。
+</Note>
+
+若手工操作遇到 `ConnectionRefusedError`，检查端口是否来自本轮监听；若遇到 `TimeoutError`，检查两端操作顺序和是否停顿超过 120 秒。上面的手工路径尚待作者复现，实际自动结果来自后面的脚本。
+
+## 用同样的步骤做自动回归
+
+<a href={pathFor('downloads/tcp-stream-lab.zip')}>下载完整实验包</a>，解压后在 shell 里逐行操作。此时应已经退出 Python 解释器。
+
+```bash
+cd tcp-stream-lab
+python3 --version
+timeout 20s python3 tcp_stream_lab.py --case all > evidence/run-local.json 2> evidence/run-local.stderr.log
+echo $?
+python3 -m json.tool evidence/run-local.json
+sha256sum -c SHA256SUMS
+```
+
+`cd` 进入解压目录；这里的相对路径从终端当前目录计算。`python3 --version` 检查版本。`timeout 20s` 限制整次回归的时间，脚本内部还有操作超时。`--case all` 运行两个用例；`>` 保存标准输出，`2>` 保存错误输出，同名文件会被覆盖，重复实验时请换运行编号。
+
+`echo $?` 要紧接运行命令，用于查看退出码；通过时为 0。`python3 -m json.tool` 读取刚保存的结果。`sha256sum -c` 核对下载包的原始文件，不能要求自己重跑的 JSON 与原始文件哈希相同，因为时间和调度记录会变化。
+
+自动脚本用同步事件代替手工切换终端。详细<a href={pathFor('downloads/tcp-stream-lab/README.md')}>手工说明</a>也随包保留。
+
+## 能迁移到 VPN 阅读中的判断
+
+<Note kind="我的理解">
+阅读基于 TCP 的隧道或控制通道时，先找到“这一层怎样识别完整消息”的规则，再看它如何处理短读、多个消息和提前 EOF。不要把某次 `recv()` 的返回值直接当作应用协议边界。
+</Note>
+
+这次实验没有使用 TLS、TLCP 或 OpenVPN，也没有抓包。它不说明线上 TCP 分了几个段，不说明哪个 VPN 有缺陷，更不提供性能结论。JSON 里的执行时长只用于记录回归过程。
+
+<Note kind="尚未确认">
+本次没有覆盖长度头截断、非法超大长度、多个连续消息和超时恢复。下一步可以先补长度头截断用例；这是待做事项，不在当前 VERIFIED 范围内。
+</Note>

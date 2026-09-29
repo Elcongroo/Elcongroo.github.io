@@ -1,0 +1,9 @@
+---
+import Base from '../../layouts/Base.astro';
+import Status from '../../components/Status.astro';
+import { getCollection } from 'astro:content';
+import { formatDate } from '../../lib/site';
+import { pathFor } from '../../lib/paths';
+const labs=(await getCollection('lab',({data})=>!data.draft)).sort((a,b)=>b.data.date.valueOf()-a.data.date.valueOf());
+---
+<Base title="实验室"><div class="shell"><header class="page-head"><div class="page-kicker">LAB / 实验台账</div><h1>记录一次具体的运行</h1><p>每条日志保留环境、结果、执行者和未覆盖的问题。实验通过，不等于所有场景都已验证。</p></header><div class="archive">{labs.map(entry=><article class="lab-entry"><div class="lab-entry-head"><span class="mono">{entry.data.number}</span><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time><Status state={entry.data.conclusion} full/></div><h2><a href={pathFor(`lab/${entry.id}/`)}>{entry.data.title}</a></h2><dl class="compact-facts"><div><dt>实验目的</dt><dd>{entry.data.purpose}</dd></div><div><dt>环境</dt><dd>{entry.data.environment.join('；')}</dd></div><div><dt>执行者</dt><dd>{entry.data.performedBy}</dd></div><div><dt>结果</dt><dd>{entry.data.result}</dd></div><div><dt>原始证据</dt><dd>{entry.data.evidence.map(e=><a href={pathFor(e.path)}>{e.label}</a>)}</dd></div><div><dt>未解决</dt><dd>{entry.data.openQuestions.join(' ')}</dd></div></dl></article>)}</div></div></Base>

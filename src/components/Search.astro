@@ -1,0 +1,11 @@
+---
+import { pathFor } from '../lib/paths';
+---
+<section id="search" class="search-panel" aria-label="全文搜索" data-bundle={pathFor('pagefind/pagefind.js')}>
+  <label for="fulltext-search">搜索正文、协议名或命令</label>
+  <div class="search-input-row"><input type="search" id="fulltext-search" placeholder="试试 XFRM、recv、密钥" autocomplete="off" aria-describedby="search-state"/><button id="search-clear" type="button" hidden>清除</button></div>
+  <p id="search-state" class="search-state" aria-live="polite">索引在输入关键词后加载；搜索在本地浏览器内完成。</p>
+  <div id="search-results" class="search-results"></div>
+  <noscript><p>全文搜索需要 JavaScript；下方文章列表和正文仍可直接阅读。</p></noscript>
+</section>
+<script is:inline type="module" src={pathFor('scripts/search.js')}></script>

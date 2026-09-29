@@ -1,0 +1,69 @@
+---
+import '../styles/global.css';
+import { site } from '../lib/site';
+import { pathFor } from '../lib/paths';
+interface Props { title?: string; description?: string; article?: boolean; }
+const { title = site.title, description = site.description, article = false } = Astro.props;
+const pathname = Astro.url.pathname;
+const nav = [['首页',''],['文章','articles/'],['分类','topics/'],['实验','lab/'],['关于','about/']];
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title === site.title ? `${site.title} 的个人博客` : `${title} · ${site.title}`}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={site.author} />
+    <meta name="theme-color" content="#fcfcfa" />
+    {!site.isPublic && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={new URL(pathname, Astro.site)} />
+    <link rel="icon" type="image/svg+xml" href={pathFor('favicon.svg')} />
+    <link rel="alternate" type="application/rss+xml" title={site.title} href={pathFor('rss.xml')} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:url" content={new URL(pathname, Astro.site)} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:site_name" content={site.title} />
+    <meta name="twitter:card" content="summary" />
+    <script is:inline>
+      try {
+        const preference = localStorage.getItem('ctp-theme');
+        if (preference === 'dark' || preference === 'light') document.documentElement.dataset.theme = preference;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到正文</a>
+    <header class="site-header shell" data-pagefind-ignore>
+      <a class="brand" href={pathFor()} aria-label="congroo 首页"><span class="author-wordmark">congroo<span aria-hidden="true">/</span></span></a>
+      <nav class="header-navigation" aria-label="主导航">{nav.map(([label,url]) => <a href={pathFor(url)} aria-current={url === '' ? (pathname === pathFor() ? 'page' : undefined) : (pathname.startsWith(pathFor(url)) ? 'page' : undefined)}>{label}</a>)}</nav>
+      <div class="header-tools">
+        <a href={pathFor('articles/#search')} class="search-link" aria-label="搜索文章"><svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 6 6"/></svg><span>搜索</span></a>
+        <button id="theme-toggle" class="theme-toggle" type="button" hidden aria-label="切换深色模式">深色</button>
+        <a href={pathFor('subscribe/')} class="mono">RSS</a>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer shell" data-pagefind-ignore>
+      <div><a href={pathFor()}>{site.title}</a><span class="footer-note">个人技术博客 · 文章、学习笔记与独立实验。</span></div>
+      <div><a href={site.github} rel="noopener noreferrer">GitHub</a><a href={pathFor('rss.xml')}>RSS</a><a href={pathFor('about/#editorial')}>内容与修订原则</a><span>© {new Date().getFullYear()} {site.author}</span></div>
+    </footer>
+    <script>
+      const button = document.querySelector<HTMLButtonElement>('#theme-toggle')!;
+      const media = window.matchMedia('(prefers-color-scheme: dark)');
+      const isDark = () => document.documentElement.dataset.theme ? document.documentElement.dataset.theme === 'dark' : media.matches;
+      const sync = () => { button.textContent = isDark() ? '浅色' : '深色'; button.setAttribute('aria-label', isDark() ? '切换浅色模式' : '切换深色模式'); };
+      button.hidden = false;
+      sync();
+      button.addEventListener('click', () => {
+        const next = isDark() ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('ctp-theme', next); } catch {}
+        sync();
+      });
+      media.addEventListener('change', sync);
+    </script>
+  </body>
+</html>

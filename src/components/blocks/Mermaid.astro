@@ -1,0 +1,12 @@
+---
+import { renderMermaidSVG } from 'beautiful-mermaid';
+interface Props { source: string; caption: string; }
+const { source, caption } = Astro.props;
+// Build-time rendering: no diagram library is sent to the browser.
+const svg = renderMermaidSVG(source, {
+  bg: 'var(--surface)', fg: 'var(--ink)', accent: 'var(--accent)',
+  muted: 'var(--muted)', line: 'var(--line-strong)', border: 'var(--line-strong)',
+  font: 'Noto Sans SC, sans-serif',
+}).replace('<svg ', '<svg aria-hidden="true" focusable="false" ');
+---
+<figure class="protocol-figure"><div class="diagram-viewport" role="img" aria-label={caption} set:html={svg}/><figcaption>{caption}</figcaption><details class="diagram-source"><summary>查看图示源文本</summary><pre><code>{source}</code></pre></details></figure>

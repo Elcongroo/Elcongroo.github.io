@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostRow from '../../components/PostRow.astro';
+import { topics } from '../../lib/site';
+import { pathFor } from '../../lib/paths';
+import { getCollection } from 'astro:content';
+export function getStaticPaths(){return topics.map(topic=>({params:{id:topic.id},props:{topic}}));}
+const {topic}=Astro.props;
+const posts=(await getCollection('posts',({data})=>!data.draft)).filter(p=>topic.categories.includes(p.data.category)||(topic.id==='engineering'&&p.data.tags.includes('验证方法')));
+---
+<Base title={topic.name}><div class="shell"><header class="page-head"><div class="page-kicker">INDEX / {topic.number}</div><h1>{topic.name}</h1><p>{topic.description}</p></header><div class="archive">{posts.map(post=><PostRow post={post}/>)}<a class="outline-link" href={pathFor('topics/')}>全部主题</a></div></div></Base>

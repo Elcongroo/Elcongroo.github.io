@@ -1,0 +1,9 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import {categories} from '../../lib/site';
+import {pathFor} from '../../lib/paths';
+const posts=await getCollection('posts',({data})=>!data.draft);
+const groups=Object.entries(categories).map(([key,c])=>({key,...c,posts:posts.filter(p=>p.data.category===key)})).filter(g=>g.posts.length);
+---
+<Base title="分类"><div class="shell"><header class="page-head"><div class="page-kicker">TOPICS / 分类</div><h1>按主题阅读</h1><p>目前的文章从 Linux 网络、VPN 协议和后量子密码开始。</p></header><div class="category-contents">{groups.map(g=><section><header><h2>{g.label}</h2><span>{g.posts.length} 篇</span></header><ul>{g.posts.map(p=><li><a href={pathFor(`articles/${p.id}/`)}>{p.data.title}</a><span>{p.data.kind}</span></li>)}</ul></section>)}</div></div></Base>

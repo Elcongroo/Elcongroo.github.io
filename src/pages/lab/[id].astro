@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import Status from '../../components/Status.astro';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { pathFor } from '../../lib/paths';
+import { formatDate } from '../../lib/site';
+export async function getStaticPaths(){return (await getCollection('lab',({data})=>!data.draft)).map(entry=>({params:{id:entry.id},props:{entry}}));}
+interface Props { entry: CollectionEntry<'lab'>; }
+const {entry}=Astro.props;const {Content}=await render(entry);
+---
+<Base title={`${entry.data.number} · ${entry.data.title}`} description={entry.data.description}><div class="reading-shell lab-detail"><header class="page-head lab-detail-header"><div class="breadcrumb"><a href={pathFor('lab/')}>实验室</a> / {entry.data.number}</div><div class="page-kicker"><time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time><Status state={entry.data.conclusion} full/></div><h1 data-pagefind-meta="title">{entry.data.number} · {entry.data.title}</h1><p>{entry.data.purpose}</p></header><dl class="article-meta"><div><dt>执行者</dt><dd>{entry.data.performedBy}</dd></div><div><dt>环境</dt><dd>{entry.data.environment.join('；')}</dd></div></dl><article class="prose" data-pagefind-body><Content/><h2>证据文件</h2><ul>{entry.data.evidence.map(e=><li><a href={pathFor(e.path)}>{e.label}</a></li>)}</ul>{entry.data.article&&<p><a href={pathFor(`articles/${entry.data.article}/`)}>阅读对应分析与手工步骤</a></p>}</article></div></Base>
