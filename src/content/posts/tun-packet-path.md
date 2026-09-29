@@ -5,8 +5,9 @@ takeaway: "TUN 让用户态程序读写 IP 包，本身不负责加密。业务�
 basis: {"label": "依据：Linux 内核 TUN/TAP 文档", "href": "https://docs.kernel.org/networking/tuntap.html", "boundary": "限经典用户态隧道的概念路径；尚无独立实验记录，也不据此判断性能瓶颈。"}
 date: 2026-09-29
 updated: 2026-09-29
-series: 公开资料阅读
-seriesOrder: 2
+journey: {"date": "2026-08-08", "order": 3, "question": "内核怎样把一个 IP 包交给用户态隧道？"}
+series: 沿着一条安全通信链路
+seriesOrder: 3
 difficulty: 入门
 prerequisites: [IP 地址与路由的基本概念]
 environment: [本文未执行新的协议实验]
@@ -15,6 +16,8 @@ conclusion: public
 realVerified: false
 verificationActor: 未执行实验
 changes:
+  - date: 2026-09-29
+    note: 接入连续阅读主线，补充上下篇关系与回溯编排说明；原有证据和公开日期不变。
   - date: 2026-09-29
     note: 明确标题、摘要与首页要点，补充依据和结论边界；未新增实验结果。
   - date: 2026-09-29
@@ -75,3 +78,7 @@ TUN 本身没有完成密码学保护。图中“隧道处理”是否包含加�
 图中出现用户态读写，只能说明需要关注这条路径，不能直接证明某台设备慢在这里。要判断瓶颈，仍需固定报文大小、并发、硬件和软件版本，再实际测量。
 
 下一步适合做一个隔离的小实验：亲眼观察一个包进入 TUN，找到读它的程序，再故意改变一条实验路由，解释为什么程序收不到包。本文尚未附上这份实验的原始证据。
+
+## 放回这条阅读主线
+
+上一篇区分了 [内核的本地交付与转发](/articles/linux-packet-path/)。TUN 展示的是用户态隧道怎样接入它；接下来换到 [IPsec 的状态、策略与业务验证](/articles/vpn-connected-is-not-enough/)，比较另一种数据路径。

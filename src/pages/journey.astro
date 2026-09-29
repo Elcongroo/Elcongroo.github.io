@@ -1,0 +1,16 @@
+---
+import Base from '../layouts/Base.astro';
+import Status from '../components/Status.astro';
+import { getCollection } from 'astro:content';
+import { pathFor } from '../lib/paths';
+import { formatDate } from '../lib/site';
+const chapters=(await getCollection('posts',({data})=>!data.draft&&!!data.journey)).sort((a,b)=>a.data.journey!.order-b.data.journey!.order);
+---
+<Base title="研究主线" description="从 7 月 15 日入职开始，回看 Linux 内核、IPsec / TLS 与高性能网络之间的一条连续阅读线。">
+  <div class="reading-shell journey-page">
+    <header class="page-head"><div class="page-kicker">READING THREAD / 研究主线</div><h1>沿着一条安全通信链路</h1><p>包怎样经过内核，协议怎样建立保护，性能问题又在哪里出现。</p></header>
+    <div class="journey-editorial"><p>2026 年 7 月 15 日入职是这条线的起点。我从已有的源码阅读和研究笔记里选出七个问题，按“内核 → 隧道 → 协议 → 性能”重新编排。</p><p><strong>日期说明：</strong>下列日期是每隔 12 天安排的回溯阅读坐标，用来组织这段起步阶段的思考，不能据此推断某一天已经完成了相应研究。文章均于 <time datetime="2026-09-29">2026-09-29</time> 整理公开，原始实验日期另见实验记录。</p></div>
+    <ol class="journey-chapters">{chapters.map(post=><li><div class="journey-marker"><span>{String(post.data.journey!.order).padStart(2,'0')}</span><time datetime={post.data.journey!.date.toISOString()}>{formatDate(post.data.journey!.date).slice(5).replace('-','.')}</time></div><article><p class="journey-question">{post.data.journey!.question}</p><h2><a href={pathFor(`articles/${post.id}/`)}>{post.data.title}</a></h2><p>{post.data.description}</p><div class="journey-chapter-meta"><Status state={post.data.conclusion}/><a href={pathFor(`articles/${post.id}/`)}>阅读第 {post.data.journey!.order} 篇 ↗</a></div></article></li>)}</ol>
+    <section class="journey-afterword prose"><h2>这条线会怎样继续</h2><p>下一步是给性能问题补上独立环境、原始数据与对照实验；给源码推断补上运行时的路径验证。eBPF、XDP、DPDK 与硬件卸载会按实际问题进入记录。</p><p>基础实验与密码算法接入的补充内容，继续保留在 <a href={pathFor('articles/')}>文章归档</a> 中。</p></section>
+  </div>
+</Base>

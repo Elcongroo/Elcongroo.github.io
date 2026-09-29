@@ -5,17 +5,17 @@ export const site = {
   englishTitle: 'congroo’s blog',
   author: 'congroo',
   url: process.env.SITE_URL || 'https://elcongroo.github.io',
-  description: 'congroo 的个人技术博客。记录编程、Linux 网络、VPN 与密码工程中的问题、学习笔记和独立实验。',
+  description: 'congroo 的个人技术博客。沿 Linux 内核、IPsec / TLS 与高性能网络记录源码阅读、工程思考和独立实验。',
   github: 'https://github.com/Elcongroo',
 };
 
 export const categories = {
-  vpn: { label: 'VPN 协议栈', english: 'VPN Protocols' },
-  linux: { label: 'Linux 网络', english: 'Linux Networking' },
+  linux: { label: 'Linux 内核与网络', english: 'Kernel & Networking' },
+  vpn: { label: 'IPsec / TLS', english: 'IPsec & TLS' },
+  performance: { label: '高性能网络', english: 'Network Performance' },
+  engineering: { label: '工程思考', english: 'Engineering Notes' },
   crypto: { label: '密码工程', english: 'Cryptographic Engineering' },
   pqc: { label: '后量子迁移', english: 'PQC Migration' },
-  performance: { label: '网关性能', english: 'Gateway Performance' },
-  engineering: { label: '工程接管', english: 'Engineering Ownership' },
 } as const;
 
 export const conclusionStates = {
@@ -26,10 +26,11 @@ export const conclusionStates = {
 } as const;
 
 export const topics = [
-  { id: 'vpn', name: '协议栈', number: '01', description: 'IKE、TLS 与隧道里的控制和数据。', categories: ['vpn'], tags: ['IPsec', 'OpenVPN'] },
-  { id: 'linux', name: 'Linux 数据面', number: '02', description: '从 Socket 到 TUN、XFRM 与转发路径。', categories: ['linux', 'performance'], tags: ['TUN', 'XFRM'] },
-  { id: 'crypto', name: '密码工程', number: '03', description: '算法怎样进入协议与密钥生命周期。', categories: ['crypto', 'pqc'], tags: ['TLCP', 'Provider', 'PQC'] },
-  { id: 'engineering', name: '工程与验证', number: '04', description: '把源码、构建身份与运行结果对应起来。', categories: ['engineering'], tags: ['验证方法'] },
+  { id: 'linux', name: 'Linux 内核与网络', number: '01', description: '包的本地交付、转发与内核／用户态边界。', categories: ['linux'], tags: ['NAPI', 'TUN', 'XFRM'] },
+  { id: 'vpn', name: 'IPsec / TLS', number: '02', description: '沿状态机、密钥与业务包读 strongSwan 和 OpenVPN。', categories: ['vpn'], tags: ['IPsec', 'TLS', 'OpenVPN'] },
+  { id: 'performance', name: '高性能网络', number: '03', description: '先记录负载、队列与 CPU，再讨论卸载和高速数据路径。', categories: ['performance'], tags: ['perf', 'eBPF', 'DPDK'] },
+  { id: 'crypto', name: '密码工程', number: '04', description: '算法接入协议与密钥生命周期的补充阅读。', categories: ['crypto', 'pqc'], tags: ['TLCP', 'Provider', 'PQC'] },
+  { id: 'engineering', name: '工程思考', number: '05', description: '研究路线、源码阅读方法与结论边界。', categories: ['engineering'], tags: ['验证方法'] },
 ];
 
 export const formatDate = (value: Date | string) => new Date(value).toISOString().slice(0, 10);

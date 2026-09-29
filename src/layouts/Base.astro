@@ -5,7 +5,7 @@ import { pathFor } from '../lib/paths';
 interface Props { title?: string; description?: string; article?: boolean; }
 const { title = site.title, description = site.description, article = false } = Astro.props;
 const pathname = Astro.url.pathname;
-const nav = [['首页',''],['文章','articles/'],['分类','topics/'],['实验','lab/'],['关于','about/']];
+const nav = [['首页',''],['文章','articles/'],['主线','journey/'],['实验','lab/'],['关于','about/']];
 ---
 <!doctype html>
 <html lang="zh-CN">

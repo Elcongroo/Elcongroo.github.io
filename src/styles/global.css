@@ -140,6 +140,28 @@ img,svg{max-width:100%} ::selection{background:var(--accent);color:var(--paper)}
 .page-head h1 { color: var(--ink); font-weight:700; }
 .article-header h1 { font-size: clamp(1.6rem, 2.8vw, 2.15rem); font-weight: 750; line-height: 1.55; margin: 16px 0; text-wrap: balance; }
 .article-title-part { display:inline-block; max-width:100%; }
+.article-journey { font:.8125rem/1.9 var(--sans); color:var(--muted); padding-left:12px; border-left:2px solid var(--accent); margin:13px 0 20px; }
+.article-journey a { color:var(--ink); text-decoration:underline; }
+.article-journey span { display:block; margin-top:3px; }
+.retrospective-date { color:var(--muted); font:.6875rem/1.8 var(--sans); }
+.retrospective-date time { font-family:var(--mono); }
+.journey-page { max-width:920px; }
+.journey-editorial { max-width:720px; border-left:2px solid var(--accent); padding-left:20px; margin:0 0 48px; }
+.journey-editorial p { font-size:.9375rem; margin:0 0 12px; }
+.journey-editorial p:last-child { color:var(--muted); font-size:.8125rem; }
+.journey-chapters { list-style:none; padding:0; margin:0; }
+.journey-chapters>li { display:grid; grid-template-columns:85px minmax(0,1fr); gap:30px; padding-bottom:37px; position:relative; }
+.journey-chapters>li:not(:last-child)::before { position:absolute; content:''; width:1px; background:var(--line-strong); top:64px; bottom:0; left:21px; }
+.journey-marker>span { display:block; font:600 2rem/1.25 var(--english); color:var(--ink); }
+.journey-marker time { font:.75rem/2 var(--mono); color:var(--muted); }
+.journey-question { font:.8125rem/1.8 var(--sans); color:var(--muted); margin:0 0 6px; }
+.journey-chapters h2 { margin:0 0 10px; font-size:1.4rem; font-weight:750; line-height:1.5; }
+.journey-chapters article>p:not(.journey-question) { font-size:.9375rem; margin:0 0 13px; }
+.journey-chapter-meta { display:flex; align-items:center; gap:25px; font:.75rem/1.8 var(--sans); }
+.journey-chapter-meta>a { color:var(--ink); text-decoration:underline; }
+.journey-afterword { border-top:1px solid var(--line); margin-top:5px; padding-top:23px; }
+.archive-intro-note { max-width:720px; font:.8125rem/1.9 var(--sans); color:var(--muted); }
+.archive-intro-note a { color:var(--ink); text-decoration:underline; }
 .article-byline { font: .875rem/1.8 var(--serif); color: var(--muted); margin: 0 0 15px; }
 .article-byline time { font-family: var(--english); }
 .article-header .summary { color: var(--ink); font-size: 1.0625rem; margin-bottom: 16px; }
@@ -169,6 +191,9 @@ img,svg{max-width:100%} ::selection{background:var(--accent);color:var(--paper)}
   .site-footer { flex-direction: column; gap: 12px; }
   .article-title-part { display:block; }
   .article-title-colon { display:none; }
+  .journey-chapters>li { grid-template-columns:46px minmax(0,1fr); gap:17px; }
+  .journey-chapters h2 { font-size:1.15rem; }
+  .journey-editorial { padding-left:13px; }
   .article-reading-guide { font-size: .875rem; }
   .article-reading-guide>div { grid-template-columns: 36px minmax(0,1fr); gap: 10px; }
 }

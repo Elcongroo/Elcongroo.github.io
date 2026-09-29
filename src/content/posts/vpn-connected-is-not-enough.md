@@ -5,8 +5,9 @@ takeaway: "隧道状态不能单独证明业务流受到保护。应围绕同一
 basis: {"label": "依据：RFC 7296", "href": "https://www.rfc-editor.org/rfc/rfc7296.html", "boundary": "公开资料阅读与验证方法整理；本文未提供对应环境的实测或抓包证据。"}
 date: 2026-09-29
 updated: 2026-09-29
-series: 公开资料阅读
-seriesOrder: 1
+journey: {"date": "2026-08-20", "order": 4, "question": "隧道协商成功，为什么业务仍可能没被保护？"}
+series: 沿着一条安全通信链路
+seriesOrder: 4
 difficulty: 入门
 prerequisites: [IP 地址与路由的基本概念]
 environment: [本文未执行新的协议实验]
@@ -15,6 +16,8 @@ conclusion: public
 realVerified: false
 verificationActor: 未执行实验
 changes:
+  - date: 2026-09-29
+    note: 接入连续阅读主线，补充上下篇关系与回溯编排说明；原有证据和公开日期不变。
   - date: 2026-09-29
     note: 明确标题、摘要与首页要点，补充依据和结论边界；未新增实验结果。
   - date: 2026-09-29
@@ -86,3 +89,7 @@ IKE SA 用于保护 IKE 双方后续的控制消息。CHILD SA 关联用于业�
 公开材料还需要去除认证信息、会话密钥和真实业务信息。尤其不要把完整 XFRM state 输出直接贴上网：其中可能包含密钥材料。
 
 这篇文章给出的是机制和验证框架。下一次实验应补齐可公开的拓扑、原始日志、抓包、版本与一次失败场景，才能形成可复现的实验记录。
+
+## 下一步沿源码追一次交接
+
+了解 TUN 之后，再看 IPsec 会发现：业务包不一定交给用户态隧道程序逐包处理。下一篇沿 [strongSwan 的 CHILD_SA 到 XFRM](/articles/strongswan-child-sa-xfrm/) 追踪状态和策略如何安装，把这篇的验证对象与源码接口对起来。
